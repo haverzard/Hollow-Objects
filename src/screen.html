@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    
+    <title>Hollow WebGL</title>
+    <link href="screen.css" rel="stylesheet" />
+    <link href="help.css" rel="stylesheet" />
+    <script src="util.js"></script>
+    <script src="view/main.js"></script>
+    <script src="model/shape.js"></script>
+    <script src="controller/main.js"></script>
+    <script src="shaders/norm2d_vertex.js"></script>
+    <script src="shaders/color_frag.js"></script>
+  </head>
+  <body>
+    <div id="paint-app">
+        <section id="workspace">
+          <div id="myDIV">
+            <button onclick="" class="btn active">
+              Button
+            </button>
+          </div>
+          <div>
+            <canvas id="main-view" width="800" height="500"></canvas>
+          </div>
+        </section>
+        <section id="help" class="hide-menu">
+          <div class="help-container">
+            <h1>Test</h1>
+            <p>
+              Test
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+    <button id="help-btn" onclick="toggleHelpMenu()">
+      Help ?
+    </button>
+    <script src="gl.js"></script>
+  </body>
+</html>
