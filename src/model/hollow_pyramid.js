@@ -84,4 +84,58 @@ class HollowPyramid extends HollowObject {
             shape.draw(gl, shaderProgram)
         }
     }
+
+    parse() {
+        let parsed = { "type": "triangular_pyramid"}
+        let shape
+        const th = Math.tan(getRad(60)) // triangle height
+        const prad = (Math.asin(1/3)) // pyramid radian
+        const cfp = Math.cos(prad) // cos for pyramid
+        const sfp = Math.sin(prad) // sin for pyramid
+        /* Outer */
+        shape = new HollowTriangle()
+        shape
+            .addRotateX(90)
+            .addTranslation([0, - th/3, 0])
+            .addScaling(0.2)
+            .addMTransform(this.MTransform)
+        shape.setColor([1, 0, 0])
+        parsed["o_bottom"] = shape.parse()
+
+        for (let i = 0; i < 3; i++) {
+            shape = new HollowTriangle()
+            shape
+                .addRotateX(getDeg(prad))
+                .addTranslation([0, (cfp - 1) * th/3, (sfp - 1) * th/3])
+                .addScaling(0.2)
+                .addRotateY(i*120)
+                .addMTransform(this.MTransform)
+            shape.setColor([0, 1, 0])
+            parsed["o_front_"+i] = shape.parse()
+        }
+
+        /* Inner */
+        const th2 = th * (1 - 0.125) // sin for triangle
+        shape = new HollowTriangle(1 - 0.125)
+        shape
+            .addRotateX(90)
+            .addTranslation([0, - th/3 + 0.135 * th2, 0])
+            .addScaling(0.2)
+            .addMTransform(this.MTransform)
+        shape.setColor([0.5, 0, 0])
+        parsed["i_bottom"] = shape.parse()
+
+        for (let i = 0; i < 3; i++) {
+            shape = new HollowTriangle(1 - 0.125)
+            shape
+                .addRotateX(getDeg(prad))
+                .addTranslation([0, cfp * th2/3 - th/3, (sfp * th2/3 - th/3) + 0.125 * th])
+                .addScaling(0.2)
+                .addRotateY(i*120)
+                .addMTransform(this.MTransform)
+            shape.setColor([1, 0.5, 0])
+            parsed["i_front_"+i] = shape.parse()
+        }
+        return parsed
+    }
 }
