@@ -1,5 +1,9 @@
 var observer
 
+function setMatTransform(gl, shaderProgram, attr, mat) {
+  gl.uniformMatrix4fv(gl.getUniformLocation(shaderProgram, attr), false, transpose(mat).flat())
+}
+
 function createBuffer(gl, data, DataClass=Float32Array, bufferType=gl.ARRAY_BUFFER, draw=gl.DYNAMIC_DRAW) {
   var buffer = gl.createBuffer()
   gl.bindBuffer(bufferType, buffer)
