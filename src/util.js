@@ -1,4 +1,4 @@
-const ASPECT_RATIO = window.innerWidth / window.innerHeight
+const ASPECT_RATIO = 1
 
 function normalizeX(canvas, x) {
     return (x * 2) / canvas.width - 1
@@ -8,6 +8,9 @@ function normalizeY(canvas, y) {
     return (-y * 2) / canvas.height + 1
 }
 
+function getDeg(rad) {
+    return rad * 180 / Math.PI
+}
 
 function getRad(degree) {
     return Math.PI * degree / 180

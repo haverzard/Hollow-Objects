@@ -2,7 +2,7 @@ class MainView {
     constructor() {
         // init canvas
         this.canvas = document.getElementById('main-view')
-        this.canvas.width = window.innerWidth * 0.90
+        this.canvas.width = window.innerHeight * 0.90
         this.canvas.height = window.innerHeight * 0.90
     
         // attributes
@@ -16,7 +16,7 @@ class MainView {
         this.shaderProgram = loadShader(this.gl, norm2dVertex, colorFrag)
 
         // init matrix transform
-        setMatTransform(this.gl, this.shaderProgram, "C", getRxMat(10))
+        setMatTransform(this.gl, this.shaderProgram, "C", getIdentityMat())
     }
 }
   
