@@ -34,7 +34,6 @@ function getZeroMat(length=4) {
 }
 
 function transpose(mat) {
-    console.log(mat)
     let newMat = Array(mat[0].length)
     for (let i = 0; i < mat[0].length; i++)
         newMat[i] = Array(mat.length)
@@ -43,7 +42,6 @@ function transpose(mat) {
             newMat[j][i] = mat[i][j]
         }
     }
-    console.log(newMat)
     return newMat
 }
 
