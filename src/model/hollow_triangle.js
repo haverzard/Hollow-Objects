@@ -1,0 +1,41 @@
+class HollowTriangle extends HollowObject {
+    constructor(length=1) {
+        super()
+        this.length = length
+        this.shape = Array(3)
+    }
+
+    initialize() {
+        const rad = getRad(60),
+        c = Math.cos(rad),
+        s = Math.sin(rad),
+        t = Math.tan(rad),
+        stroke = 0.25,
+        d = this.length
+
+        this.shape[0] = new Shape([
+            [-d,            -d/3*t,             0],
+            [-d+stroke,     -d/3*t,             0],
+            [stroke*c,      d*2/3*t-stroke*s,   0],
+            [0,             d*2/3*t,            0],
+        ], this.color)
+        this.shape[1] = new Shape([
+            [-d,            -d/3*t,             0],
+            [-d+stroke*c,   -d/3*t+stroke*s,    0],
+            [d-stroke*c,    -d/3*t+stroke*s,    0],
+            [d,             -d/3*t,             0],
+        ], this.color)
+        this.shape[2] = new Shape([
+            [0,             d*2/3*t,            0],
+            [-stroke*c,     d*2/3*t-stroke*s,   0],
+            [d-stroke,      -d/3*t,             0],
+            [d,             -d/3*t,             0],
+        ], this.color)
+    }
+
+    draw(gl, shaderProgram) {
+        if (!this.shape[0] || this.shape[0][0] != -this.length) this.initialize()
+        setMatTransform(gl, shaderProgram, "MV", this.MTransform)
+        for (let i = 0; i < 3; i++) this.shape[i].draw(gl, shaderProgram)
+    }
+}
