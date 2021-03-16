@@ -1,49 +1,48 @@
 class HollowObject {
     constructor() {
-        this.MTransform = getIdentityMat()
-        this.color = [0,0,0]
+        this.ViewMatrix = getIdentityMat()
     }
 
     setColor(color) {
         this.color = color
     }
 
-    setMV(mat) {
-        this.MTransform = mat
+    setViewMatrix(mat) {
+        this.ViewMatrix = mat
     }
 
-    resetMV() {
-        this.MTransform = getIdentityMat()
+    resetViewMatrix() {
+        this.ViewMatrix = getIdentityMat()
         return this
     }
 
     addScaling(scale) {
-        this.MTransform = matMult(getSMat(Array(3).fill(scale)), this.MTransform)
+        this.ViewMatrix = matMult(getSMat(Array(3).fill(scale)), this.ViewMatrix)
         return this
     }
 
     addTranslation(translate) {
-        this.MTransform = matMult(getTMat(translate), this.MTransform)
+        this.ViewMatrix = matMult(getTMat(translate), this.ViewMatrix)
         return this
     }
 
     addRotateX(deg) {
-        this.MTransform = matMult(getRxMat(deg), this.MTransform)
+        this.ViewMatrix = matMult(getRxMat(deg), this.ViewMatrix)
         return this
     }
 
     addRotateY(deg) {
-        this.MTransform = matMult(getRyMat(deg), this.MTransform)
+        this.ViewMatrix = matMult(getRyMat(deg), this.ViewMatrix)
         return this
     }
 
     addRotateZ(deg) {
-        this.MTransform = matMult(getRzMat(deg), this.MTransform)
+        this.ViewMatrix = matMult(getRzMat(deg), this.ViewMatrix)
         return this
     }
 
-    addMTransform(MTransform) {
-        this.MTransform = matMult(MTransform, this.MTransform)
+    addViewMatrix(ViewMatrix) {
+        this.ViewMatrix = matMult(ViewMatrix, this.ViewMatrix)
         return this
     }
 }

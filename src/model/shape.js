@@ -10,7 +10,7 @@ class Shape {
 
         // bind buffer to attribute in shaders
         bindBuffer(gl, shaderProgram, vertex_buffer, 3, 'position')
-        gl.uniform3fv(gl.getUniformLocation(shaderProgram, "color"), this.color)
+        gl.uniform3fv(gl.getUniformLocation(shaderProgram, "u_color"), this.color)
 
         /* Step5: Drawing the required object (triangle) */
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)

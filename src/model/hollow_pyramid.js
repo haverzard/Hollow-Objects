@@ -20,8 +20,8 @@ class HollowPyramid extends HollowObject {
             .addRotateX(90)
             .addTranslation([0, - th/3, 0])
             .addScaling(0.2)
-            .addMTransform(this.MTransform)
-        shape.setColor([1, 0, 0])
+            .addViewMatrix(this.ViewMatrix)
+        shape.setColor([0, 1, 0])
         shape.draw(gl, shaderProgram)
 
         /*
@@ -41,7 +41,7 @@ class HollowPyramid extends HollowObject {
                 .addTranslation([0, (cfp - 1) * th/3, (sfp - 1) * th/3])
                 .addScaling(0.2)
                 .addRotateY(i*120)
-                .addMTransform(this.MTransform)
+                .addViewMatrix(this.ViewMatrix)
             shape.setColor([0, 1, 0])
             shape.draw(gl, shaderProgram)
         }
@@ -58,7 +58,7 @@ class HollowPyramid extends HollowObject {
             .addRotateX(90)
             .addTranslation([0, - th/3 + 0.135 * th2, 0])
             .addScaling(0.2)
-            .addMTransform(this.MTransform)
+            .addViewMatrix(this.ViewMatrix)
         shape.setColor([0.5, 0, 0])
         shape.draw(gl, shaderProgram)
 
@@ -79,7 +79,7 @@ class HollowPyramid extends HollowObject {
                 .addTranslation([0, cfp * th2/3 - th/3, (sfp * th2/3 - th/3) + 0.125 * th])
                 .addScaling(0.2)
                 .addRotateY(i*120)
-                .addMTransform(this.MTransform)
+                .addViewMatrix(this.ViewMatrix)
             shape.setColor([1, 0.5, 0])
             shape.draw(gl, shaderProgram)
         }
@@ -98,7 +98,7 @@ class HollowPyramid extends HollowObject {
             .addRotateX(90)
             .addTranslation([0, - th/3, 0])
             .addScaling(0.2)
-            .addMTransform(this.MTransform)
+            .addViewMatrix(this.ViewMatrix)
         shape.setColor([1, 0, 0])
         parsed["o_bottom"] = shape.parse()
 
@@ -109,7 +109,7 @@ class HollowPyramid extends HollowObject {
                 .addTranslation([0, (cfp - 1) * th/3, (sfp - 1) * th/3])
                 .addScaling(0.2)
                 .addRotateY(i*120)
-                .addMTransform(this.MTransform)
+                .addViewMatrix(this.ViewMatrix)
             shape.setColor([0, 1, 0])
             parsed["o_front_"+i] = shape.parse()
         }
@@ -121,7 +121,7 @@ class HollowPyramid extends HollowObject {
             .addRotateX(90)
             .addTranslation([0, - th/3 + 0.135 * th2, 0])
             .addScaling(0.2)
-            .addMTransform(this.MTransform)
+            .addViewMatrix(this.ViewMatrix)
         shape.setColor([0.5, 0, 0])
         parsed["i_bottom"] = shape.parse()
 
@@ -132,7 +132,7 @@ class HollowPyramid extends HollowObject {
                 .addTranslation([0, cfp * th2/3 - th/3, (sfp * th2/3 - th/3) + 0.125 * th])
                 .addScaling(0.2)
                 .addRotateY(i*120)
-                .addMTransform(this.MTransform)
+                .addViewMatrix(this.ViewMatrix)
             shape.setColor([1, 0.5, 0])
             parsed["i_front_"+i] = shape.parse()
         }

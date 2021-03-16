@@ -35,7 +35,7 @@ class HollowTriangle extends HollowObject {
 
     draw(gl, shaderProgram) {
         if (!this.shape[0] || this.shape[0][0] != -this.length) this.initialize()
-        setMatTransform(gl, shaderProgram, "MV", this.MTransform)
+        setMatTransform(gl, shaderProgram, "u_View", this.ViewMatrix)
         for (let i = 0; i < 3; i++) this.shape[i].draw(gl, shaderProgram)
     }
 
@@ -44,7 +44,7 @@ class HollowTriangle extends HollowObject {
         let parsed = {}
         for (let i = 0; i < 3; i++) {
             parsed["part_"+i] = {
-                "vertices": to3D(matMult(to4D(this.shape[i].vertices), transpose(this.MTransform))),
+                "vertices": to3D(matMult(to4D(this.shape[i].vertices), transpose(this.ViewMatrix))),
                 "color": this.shape[i].color,
             }
         }

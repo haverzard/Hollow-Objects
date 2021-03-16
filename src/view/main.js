@@ -16,7 +16,10 @@ class MainView {
         this.shaderProgram = loadShader(this.gl, norm2dVertex, colorFrag)
 
         // init matrix transform
-        setMatTransform(this.gl, this.shaderProgram, "C", getIdentityMat())
+        this.ProjectionMatrix = getIdentityMat()
+        this.ModelMatrix = getSMat([3,3,3])
+        setMatTransform(this.gl, this.shaderProgram, "u_Projection", this.ProjectionMatrix)
+        setMatTransform(this.gl, this.shaderProgram, "u_Model", this.ModelMatrix)
     }
 }
   
