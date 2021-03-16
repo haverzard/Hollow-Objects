@@ -22,6 +22,7 @@ class HollowPyramid extends HollowObject {
             .addScaling(0.2)
             .addViewMatrix(this.ViewMatrix)
         shape.setColor([0, 1, 0])
+        shape.setNormal([0, 0, -1])
         shape.draw(gl, shaderProgram)
 
         /*
@@ -81,6 +82,7 @@ class HollowPyramid extends HollowObject {
                 .addRotateY(i*120)
                 .addViewMatrix(this.ViewMatrix)
             shape.setColor([1, 0.5, 0])
+            shape.setNormal([0, 0, -1])
             shape.draw(gl, shaderProgram)
         }
     }
@@ -134,6 +136,7 @@ class HollowPyramid extends HollowObject {
                 .addRotateY(i*120)
                 .addViewMatrix(this.ViewMatrix)
             shape.setColor([1, 0.5, 0])
+            shape.setNormal([0, 0, -1])
             parsed["i_front_"+i] = shape.parse()
         }
         return parsed
