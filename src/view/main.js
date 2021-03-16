@@ -1,7 +1,12 @@
 class MainView {
     constructor() {
+        this.onclick = false
+
         // init canvas
         this.canvas = document.getElementById('main-view')
+        this.canvas.addEventListener('mousedown', (e) => this.onClick(e))
+        this.canvas.addEventListener('mouseup', () => this.onUnclick())
+        this.canvas.addEventListener('mousemove', (e) => this.rotateMouseMove(e))
         this.canvas.width = window.innerHeight * 0.90
         this.canvas.height = window.innerHeight * 0.90
     
@@ -17,9 +22,31 @@ class MainView {
 
         // init matrix transform
         this.ProjectionMatrix = getIdentityMat()
-        this.ModelMatrix = getSMat([3,3,3])
+        this.ModelMatrix = getIdentityMat()
         setMatTransform(this.gl, this.shaderProgram, "u_Projection", this.ProjectionMatrix)
         setMatTransform(this.gl, this.shaderProgram, "u_Model", this.ModelMatrix)
+    }
+
+    onClick(e) {
+        this.onclick = true
+        this.lastPoint = getPosition(this.canvas, e)
+    }
+
+    onUnclick() {
+        this.onclick = false
+    }
+
+    rotateMouseMove(e) {
+        if (this.onclick) {
+            const position = getPosition(this.canvas, e)
+            const dy = (position[0] - this.lastPoint[0]) * 0.5
+            const dx = (position[1] - this.lastPoint[1]) * 0.5
+
+            this.ModelMatrix = matMult(matMult(getRxMat(-dx), getRyMat(-dy)), this.ModelMatrix)
+            setMatTransform(this.gl, this.shaderProgram, "u_Model", this.ModelMatrix)
+
+            this.lastPoint = position
+        }
     }
 }
   

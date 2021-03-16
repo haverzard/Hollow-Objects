@@ -8,6 +8,13 @@ function normalizeY(canvas, y) {
     return (-y * 2) / canvas.height + 1
 }
 
+function getPosition(canvas, event) {
+    const rect = canvas.getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    return [x, y]
+}
+
 function getDeg(rad) {
     return rad * 180 / Math.PI
 }
