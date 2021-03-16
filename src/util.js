@@ -25,28 +25,51 @@ function getIdentityMat() {
     return mat
 }
 
-function getZeroMat() {
+function getZeroMat(length=4) {
     var mat = []
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < length; i++) {
         mat.push(Array(4).fill(0.0))
     }
     return mat
 }
 
 function transpose(mat) {
-    for (let i = 0; i < 4; i++) {
-        for (let j = i+1; j < 4; j++) {
-            t = mat[i][j]
-            mat[i][j] = mat[j][i]
-            mat[j][i] = t
+    let newMat = Array(mat[0].length)
+    for (let i = 0; i < mat[0].length; i++)
+        newMat[i] = Array(mat.length)
+    for (let i = 0; i < mat.length; i++) {
+        for (let j = 0; j < mat[0].length; j++) {
+            newMat[j][i] = mat[i][j]
         }
     }
-    return mat
+    return newMat
+}
+
+function to4D(mat) {
+    let newMat = Array(mat.length)
+    for (let i = 0; i < mat.length; i++) {
+        newMat[i] = Array(4).fill(1)
+        for (let j = 0; j < 3; j++) {
+            newMat[i][j] = mat[i][j]
+        }
+    }
+    return newMat
+}
+
+function to3D(mat) {
+    let newMat = Array(mat.length)
+    for (let i = 0; i < mat.length; i++) {
+        newMat[i] = Array(3).fill(1)
+        for (let j = 0; j < 3; j++) {
+            newMat[i][j] = mat[i][j]
+        }
+    }
+    return newMat
 }
 
 function matMult(mat1, mat2) {
-    var mat = getZeroMat()
-    for (let i = 0; i < 4; i++)
+    var mat = getZeroMat(mat1.length)
+    for (let i = 0; i < mat1.length; i++)
         for (let j = 0; j < 4; j++)
             for (let k = 0; k < 4; k++)
                 mat[i][j] += mat1[i][k] * mat2[k][j]
