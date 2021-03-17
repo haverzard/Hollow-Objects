@@ -126,6 +126,23 @@ function getRzMat(degree) {
     return mat
 }
 
+function crossProd(v1, v2) {
+    let xcomp = v1[1] * v2[2] - v1[2] * v2[2]
+    let ycomp = v1[0] * v2[2] - v1[2] * v2[0]
+    let zcomp = v1[0] * v2[1] - v1[1] * v2[0]
+    
+    return [xcomp, -ycomp, zcomp]
+}
+
+function getNorm2Vec(v1, v2) {
+    let cProd = crossProd(v1, v2)
+    let lengthVec = Math.sqrt(Math.pow(cProd[0], 2) + Math.pow(cProd[1], 2) + Math.pow(cProd[2], 2))
+    
+    return cProd.map(function(element) {
+        return element / lengthVec
+    })
+}
+
 function getGL(canvas) {
     var gl = canvas.getContext('webgl')
     if (!gl) {

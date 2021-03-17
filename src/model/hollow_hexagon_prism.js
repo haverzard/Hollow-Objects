@@ -1,5 +1,10 @@
 class HollowHexagonPrism extends HollowObject {
-    constructor(side_length = 0.5, frame_thickness = 0.1) {
+    /**
+     * Constructor
+     * @param {int} side_length 
+     * @param {int} frame_thickness 
+     */
+    constructor(side_length = 1, frame_thickness = 0.1) {
         super()
         this.side_length = side_length;
         this.frame_thickness = frame_thickness;
@@ -41,11 +46,44 @@ class HollowHexagonPrism extends HollowObject {
         // temp buffers
         this.temp_vert = [];
         this.temp_color = []
+        this.temp_normal = [];
+        this.temp_shininess = [];
+    }
+
+    /**
+     * Add points to vertices buffer using face sort
+     * @param {Array of Float} point 
+     */
+    add_vertices(point) {
+        // push to temp buffer with face sort
+        for (var j = 0; j < 6; j++) {
+            for (var k = 0; k < 4; k++) {
+                this.temp_vert.append(point[this.FACE_SORT[j][k] * 3])
+                this.temp_vert.append(point[this.FACE_SORT[j][k] * 3 + 1])
+                this.temp_vert.append(point[this.FACE_SORT[j][k] * 3 + 2])
+            }
+
+            // Prepare to generate normal vector
+            var v1 = [
+                point[this.FACE_SORT[j][1] * 3] - point[this.FACE_SORT[j][0] * 3],
+                point[this.FACE_SORT[j][1] * 3 + 1] - point[this.FACE_SORT[j][0] * 3 + 1],
+                point[this.FACE_SORT[j][1] * 3 + 2] - point[this.FACE_SORT[j][0] * 3 + 2]
+            ]
+            var v2 = [
+                point[this.FACE_SORT[j][3] * 3] - point[this.FACE_SORT[j][0] * 3],
+                point[this.FACE_SORT[j][3] * 3 + 1] - point[this.FACE_SORT[j][0] * 3 + 1],
+                point[this.FACE_SORT[j][3] * 3 + 2] - point[this.FACE_SORT[j][0] * 3 + 2]
+            ]
+            
+            // Generate normal and shininess coeff
+            this.temp_normal.append(getNorm2Vec(v1, v2))
+            this.temp_shininess.append(20.0)
+        }
     }
 
     /**
      * Generate prism's base or roof
-     * @param {Is roof} is_roof 
+     * @param {bool} is_roof 
      */
     generate_base(is_roof = false) {
         // For every faces
@@ -75,14 +113,7 @@ class HollowHexagonPrism extends HollowObject {
                 point.push(this.COORD_BASE[idx][1] + modz)
             }
 
-            // push to temp buffer with face sort
-            for (var j = 0; j < 6; j++) {
-                for (var k = 0; k < 4; k++) {
-                    this.temp_vert.append(point[this.FACE_SORT[j][k] * 3])
-                    this.temp_vert.append(point[this.FACE_SORT[j][k] * 3 + 1])
-                    this.temp_vert.append(point[this.FACE_SORT[j][k] * 3 + 2])
-                }
-            }
+            this.add_vertices(point)
         }
     }
 
@@ -123,49 +154,88 @@ class HollowHexagonPrism extends HollowObject {
                 point.append(this.COORD_BASE[i][1] + modz)
             }
 
-            // sort using the face sort
-            for (var j = 0; j < 6; j++) {
-                for (var k = 0; k < 4; k++) {
-                    this.temp_vert.append(point[this.FACE_SORT[j][k] * 3])
-                    this.temp_vert.append(point[this.FACE_SORT[j][k] * 3 + 1])
-                    this.temp_vert.append(point[this.FACE_SORT[j][k] * 3 + 2])
-                }
-            }
+           this.add_vertices(point)
         }
     }
 
     /**
-     * Generate hexagon prism
+     * Generate color on the prism
+     */
+    generate_color() {
+        var face_colors = [
+            [1.0,  1.0,  1.0],    // Front face: white
+            [1.0,  0.0,  0.0],    // Back face: red
+            [0.0,  1.0,  0.0],    // Top face: green
+            [0.0,  0.0,  1.0],    // Bottom face: blue
+            [1.0,  1.0,  0.0],    // Right face: yellow
+            [1.0,  0.0,  1.0]     // Left face: purple
+        ]
+        
+        // Generate for base and roof
+        for (var i = 0; i < 72; i++) {
+            let c = face_colors[i % 6]
+            this.temp_color = this.temp_color.concat(c, c, c, c)
+        }
+
+        // Generate for connector
+        for (var i = 0; i < 36; i++) {
+            var c
+            if (i % 6 == 0 || i % 6 == 1) {
+                c = face_colors[3] // Blue for bases and roofs
+            } else {
+                c = face_colors[5] // Purple for sides
+            }
+            this.temp_color = this.temp_color.concat(c, c, c, c)
+        }
+    }   
+
+    /**
+     * Generate hollow hexagon prism
      */
     generate() {
         generate_base(is_roof = false);
         generate_base(is_roof = true);
         generate_connector();
-        // generate_color();
+        generate_color();
+        this.temp_vert = this.vertices;
+        this.temp_color = this.color;
     }
 
+    /**
+     * Draw the hollow object
+     * @param {gl} gl 
+     * @param {shaderProgram} shaderProgram 
+     */
     draw(gl, shaderProgram) { // still placeholder
-        // create buffer for vertex, color, & depth - for shaders
-        var vertex_buffer = createBuffer(gl, this.vertices.flat())
+        var vertex_buffer = createBuffer(gl, this.temp_vert)
 
         // bind buffer to attribute in shaders
         bindBuffer(gl, shaderProgram, vertex_buffer, 3, 'position')
-        gl.uniform3fv(gl.getUniformLocation(shaderProgram, "color"), this.color)
+        setVector3D(gl, shaderProgram, "u_color", this.color)
 
-        /* Step5: Drawing the required object (triangle) */
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
-    
-        // Enable the depth test
-        gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LEQUAL);
-        gl.clearDepth(1.0);
-    
-        // Draw the triangles
-        gl.drawArrays(gl.TRIANGLE_FAN, 0, this.vertices.length)
+        // draw every single face with corresponding normals and shininess
+        var idx = 0;
+        for (var i = 0; i < 24 * 18; i += 4) {
+            // set normal and shininess for every shape
+            setVector3D(gl, shaderProgram, "u_normal", this.temp_normal[idx])
+            gl.uniform1f(gl.getUniformLocation(shaderProgram, "u_shininess"), this.temp_shininess[idx])
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
+        
+            gl.enable(gl.DEPTH_TEST);
+            gl.depthFunc(gl.LEQUAL);
+            gl.clearDepth(1.0);
+
+            gl.drawArrays(gl.TRIANGLE_FAN, i, 4)
+            idx++;
+        } 
     }
 
+    /**
+     * Parse object to external file
+     */
     parse() {
-        let parsed = {"type": "hexagonal_prism"}
+        let parsed = { "type": "hexagonal_prism" }
         // TBD, scrapped
     }
 }
