@@ -24,9 +24,9 @@ class MainView {
         this.ModelMatrix = getIdentityMat()
         setMatTransform(this.gl, this.shaderProgram, "u_Projection", this.ProjectionMatrix)
         setMatTransform(this.gl, this.shaderProgram, "u_Model", this.ModelMatrix)
-        setVector3D(this.gl, this.shaderProgram, "u_ambient", [0.3, 0.3, 0.3])
-        setVector3D(this.gl, this.shaderProgram, "u_viewer", [0, 0, 1])
-        setVector3D(this.gl, this.shaderProgram, "u_light", [0, 0, 1000])
+        setVector3D(this.gl, this.shaderProgram, "u_ambient", [0.4, 0.4, 0.4])
+        setVector3D(this.gl, this.shaderProgram, "u_viewer", [-1, -1, 1])
+        setVector3D(this.gl, this.shaderProgram, "u_light", [-1, -1, 1])
 
         this.observer.drawObjects(this.gl, this.shaderProgram)
     }
