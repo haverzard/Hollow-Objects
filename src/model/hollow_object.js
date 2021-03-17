@@ -45,4 +45,8 @@ class HollowObject {
         this.ViewMatrix = matMult(ViewMatrix, this.ViewMatrix)
         return this
     }
+
+    applyTransformation() {
+        return
+    }
 }
