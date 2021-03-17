@@ -1,6 +1,7 @@
 class MainView {
-    constructor() {
+    constructor(observer) {
         this.onclick = false
+        this.observer = observer
 
         // init canvas
         this.canvas = document.getElementById('main-view')
@@ -14,8 +15,6 @@ class MainView {
         this.gl = getGL(this.canvas)
         // init GL
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height)
-        this.gl.clearColor(1.0, 1.0, 1.0, 1.0)
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT)
 
         // load shader
         this.shaderProgram = loadShader(this.gl, norm2dVertex, colorFrag)
@@ -25,6 +24,11 @@ class MainView {
         this.ModelMatrix = getIdentityMat()
         setMatTransform(this.gl, this.shaderProgram, "u_Projection", this.ProjectionMatrix)
         setMatTransform(this.gl, this.shaderProgram, "u_Model", this.ModelMatrix)
+        setVector3D(this.gl, this.shaderProgram, "u_ambient", [0.3, 0.3, 0.3])
+        setVector3D(this.gl, this.shaderProgram, "u_viewer", [0, 0, 1])
+        setVector3D(this.gl, this.shaderProgram, "u_light", [0, 0, 1000])
+
+        this.observer.drawObjects(this.gl, this.shaderProgram)
     }
 
     onClick(e) {
@@ -44,6 +48,7 @@ class MainView {
 
             this.ModelMatrix = matMult(matMult(getRxMat(-dx), getRyMat(-dy)), this.ModelMatrix)
             setMatTransform(this.gl, this.shaderProgram, "u_Model", this.ModelMatrix)
+            this.observer.drawObjects(this.gl, this.shaderProgram)
 
             this.lastPoint = position
         }

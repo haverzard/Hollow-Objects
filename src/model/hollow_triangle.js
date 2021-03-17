@@ -3,6 +3,12 @@ class HollowTriangle extends HollowObject {
         super()
         this.length = length
         this.shape = Array(3)
+        this.normal = [0,0,1]
+    }
+
+    setNormal(normal) {
+        this.normal = normal
+        this.initialize()
     }
 
     initialize() {
@@ -18,19 +24,19 @@ class HollowTriangle extends HollowObject {
             [-d+stroke,     -d/3*t,             0],
             [stroke*c,      d*2/3*t-stroke*s,   0],
             [0,             d*2/3*t,            0],
-        ], this.color)
+        ], this.color, this.normal)
         this.shape[1] = new Shape([
             [-d,            -d/3*t,             0],
             [-d+stroke*c,   -d/3*t+stroke*s,    0],
             [d-stroke*c,    -d/3*t+stroke*s,    0],
             [d,             -d/3*t,             0],
-        ], this.color)
+        ], this.color, this.normal)
         this.shape[2] = new Shape([
             [0,             d*2/3*t,            0],
             [-stroke*c,     d*2/3*t-stroke*s,   0],
             [d-stroke,      -d/3*t,             0],
             [d,             -d/3*t,             0],
-        ], this.color)
+        ], this.color, this.normal)
     }
 
     draw(gl, shaderProgram) {
@@ -46,8 +52,11 @@ class HollowTriangle extends HollowObject {
             parsed["part_"+i] = {
                 "vertices": to3D(matMult(to4D(this.shape[i].vertices), transpose(this.ViewMatrix))),
                 "color": this.shape[i].color,
+                "normal": to3D(matMult(to4D([this.shape[i].normal]), transpose(this.ViewMatrix)))[0],
+                "shininess": this.shape[i].shininess,
             }
         }
+        console.log(parsed)
         return parsed
     }
 }

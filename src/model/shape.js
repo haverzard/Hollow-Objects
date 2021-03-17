@@ -1,7 +1,9 @@
 class Shape {
-    constructor(vertices, color=[0, 0, 0]) {
+    constructor(vertices, color=[0, 0, 0], normal=[0,0,1], shininess=100) {
         this.vertices = vertices
         this.color = color
+        this.normal = normal
+        this.shininess = shininess
     }
 
     draw(gl, shaderProgram) {
@@ -11,6 +13,8 @@ class Shape {
         // bind buffer to attribute in shaders
         bindBuffer(gl, shaderProgram, vertex_buffer, 3, 'position')
         setVector3D(gl, shaderProgram, "u_color", this.color)
+        setVector3D(gl, shaderProgram, "u_normal", this.normal)
+        gl.uniform1f(gl.getUniformLocation(shaderProgram, "u_shininess"), this.shininess)
 
         /* Step5: Drawing the required object (triangle) */
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
