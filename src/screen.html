@@ -22,14 +22,54 @@
   <body>
     <div id="paint-app">
         <section id="workspace">
-          <div id="myDIV">
-            <button onclick="" class="btn active">
-              Button
-            </button>
-          </div>
           <div>
+            <div id="myDIV">
+              <button onclick="" class="btn active">
+                Button
+              </button>
+            </div>
             <canvas id="main-view" width="800" height="500"></canvas>
           </div>
+          <div id="left-side">
+            <div id="btn-container">
+            </div>
+            <div id="mode-container">
+              <button id="rotate-btn">Rotate</button>
+              <button id="translate-btn">Translate</button>
+              <button id="scale-btn">Scale</button>
+            </div>
+            <div id="trf-container">
+              <section id="rotate-sec">
+                <label>Rotate X</label><br/>
+                <input class="slider" id="rotate-0" type="range" min=0 max=360 value=0>
+                <br/>
+                <label>Rotate Y</label><br/>
+                <input class="slider" id="rotate-1" type="range" min=0 max=360 value=0>
+                <br/>
+                <label>Rotate Z</label><br/>
+                <input class="slider" id="rotate-2" type="range" min=0 max=360 value=0>
+                <br/>
+              </section>
+              <section id="translate-sec">
+                <label>Translate X</label><br/>
+                <input id="translate-0" type="number" value=0>
+                <br/>
+                <label>Translate Y</label><br/>
+                <input id="translate-1" type="number" value=0>
+                <br/>
+                <label>Translate Z</label><br/>
+                <input id="translate-2" type="number" value=0>
+              </section>
+              <section id="scale-sec">
+                <label>Scale</label><br/>
+                <input id="scale" type="number" value=0>
+              </section>
+            </div>
+            <div id="confirm-container">
+              <button id="apply-btn">Apply</button>
+              <button id="cancel-btn">Cancel</button>
+            </div>
+        </div>
         </section>
         <section id="help" class="hide-menu">
           <div class="help-container">
