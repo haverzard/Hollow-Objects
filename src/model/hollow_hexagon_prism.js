@@ -64,8 +64,8 @@ class HollowHexagonPrism extends HollowObject {
                     ylevel = (is_roof) ? -this.frame_thickness : this.side_length + this.frame_thickness;
                 }
                 if (j % 4 == 3 || j % 4 == 0) {
-                    modx = this.frame_thickness * MODIFIER[i][0]
-                    modz = this.frame_thickness * MODIFIER[i][1]
+                    modx = this.frame_thickness * this.MODIFIER[i][0]
+                    modz = this.frame_thickness * this.MODIFIER[i][1]
                 }
                 if (j > 3) {
                     idx = nextIdx
@@ -90,7 +90,48 @@ class HollowHexagonPrism extends HollowObject {
      * Generate connector
      */
     generate_connector() {
-        //
+        var rad_30 = getRad(30);
+
+        // for every base vertices
+        for (var i = 0; i < 6; i++) {
+            var point = []
+            var curIdx = i
+            var prevIdx = (i - 1) % 6
+
+            // for every vertices in the block
+            for (var j = 0; j < 8; j++) {
+                var ylevel = -this.frame_thickness
+                var modx = 0
+                var modz = 0
+                if (j % 4 == 1) {
+                    modx = this.frame_thickness * this.MODIFIER[curIdx][0]
+                    modz = this.frame_thickness * this.MODIFIER[curIdx][1]
+                }
+                if (j % 4 == 2) {
+                    modx =  this.frame_thickness * (Math.cos(rad_30) + Math.tan(rad_30) * Math.sin(rad_30)) * Math.cos(getRad(90 - 60 * i))
+                    modz = -this.frame_thickness * (Math.cos(rad_30) + Math.tan(rad_30) * Math.sin(rad_30)) * Math.sin(getRad(90 - 60 * i))
+                }
+                if (j % 4 == 3) {
+                    modx = this.frame_thickness * this.MODIFIER[prevIdx][0]
+                    modz = this.frame_thickness * this.MODIFIER[prevIdx][1]
+                }
+                if (j > 3) {
+                    ylevel = this.frame_thickness + this.side_length
+                }
+                point.append(this.COORD_BASE[i][0] + modx)
+                point.append(ylevel)
+                point.append(this.COORD_BASE[i][1] + modz)
+            }
+
+            // sort using the face sort
+            for (var j = 0; j < 6; j++) {
+                for (var k = 0; k < 4; k++) {
+                    this.temp_vert.append(point[this.FACE_SORT[j][k] * 3])
+                    this.temp_vert.append(point[this.FACE_SORT[j][k] * 3 + 1])
+                    this.temp_vert.append(point[this.FACE_SORT[j][k] * 3 + 2])
+                }
+            }
+        }
     }
 
     /**
