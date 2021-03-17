@@ -235,7 +235,13 @@ class HollowHexagonPrism extends HollowObject {
      * Parse object to external file
      */
     parse() {
-        let parsed = { "type": "hexagonal_prism" }
-        // TBD, scrapped
+        let parsed = { 
+            "type": "hexagonal_prism",
+            "vertices": to3D(matMult(to4D(this.temp_vert), transpose(this.ViewMatrix))),
+            "color": this.temp,
+            "normal": to3D(matMult(to4D([this.temp_normal), transpose(this.ViewMatrix)))[0],
+            "shininess": this.temp_shininess,
+        }
+        return parsed
     }
 }
