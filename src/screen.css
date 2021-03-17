@@ -15,12 +15,12 @@ body {
   gap: 2rem;
   height: 98vh;
   flex-direction: row;
-  align-items: stretch;
 }
 
 #workspace {
   position: relative;
   width: 100vh;
+  display: flex;
 }
 
 #help-btn {
@@ -52,4 +52,31 @@ body {
 .btn:hover {
   background-color: white;
   color: black;
+}
+
+.selected {
+  background-color: #666;
+}
+
+#left-side {
+  margin-top: 50px;
+  margin-left: 50px;
+  min-width: 500px;
+}
+
+#left-side > div {
+  display: flex;
+}
+
+#btn-container {
+  margin-bottom: 50px;
+}
+
+#trf-container {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+#trf-container > * {
+  margin-right: 50px;
 }

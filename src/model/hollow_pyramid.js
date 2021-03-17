@@ -1,6 +1,7 @@
 class HollowPyramid extends HollowObject {
     constructor() {
         super()
+        this.mid = [0,0,0]
     }
 
     draw(gl, shaderProgram) {
@@ -88,7 +89,7 @@ class HollowPyramid extends HollowObject {
     }
 
     parse() {
-        let parsed = { "type": "triangular_pyramid"}
+        let parsed = { "type": "triangular_pyramid", "mid": this.mid }
         let shape
         const th = Math.tan(getRad(60)) // triangle height
         const prad = (Math.asin(1/3)) // pyramid radian

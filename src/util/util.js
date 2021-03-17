@@ -1,4 +1,5 @@
 const ASPECT_RATIO = 1
+const MODE = Object.freeze({ NONE: null, ROTATE: "rotate", TRANSLATE: "translate", SCALE: "scale" })
 
 function normalizeX(canvas, x) {
     return (x * 2) / canvas.width - 1
@@ -21,6 +22,13 @@ function getDeg(rad) {
 
 function getRad(degree) {
     return Math.PI * degree / 180
+}
+
+function neg(v) {
+    let u = Array(v.length)
+    for (let i = 0; i < v.length; i++)
+        u[i] = - v[i]
+    return u
 }
 
 function getGL(canvas) {

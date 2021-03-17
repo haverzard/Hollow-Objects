@@ -1,5 +1,5 @@
 class Shape {
-    constructor(vertices, color=[0, 0, 0], normal=[0,0,1], shininess=100) {
+    constructor(vertices, color=[0, 0, 0], normal=[0,0,1], shininess=20) {
         this.vertices = vertices
         this.color = color
         this.normal = normal
