@@ -3,7 +3,7 @@ class Observer {
         this.objects = [new HollowPyramid()]
         this.objects[0].addViewMatrix(getSMat([3, 3, 3]))
         this.objects[0].addViewMatrix(getTMat([0, 0.1, 0]))
-
+        this.objects[0] = new AdaptedHollowPyramid(JSON.stringify(this.objects[0].parse()))
         this.main = new MainView(this)
     }
 

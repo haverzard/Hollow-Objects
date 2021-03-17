@@ -52,8 +52,11 @@ class HollowTriangle extends HollowObject {
             parsed["part_"+i] = {
                 "vertices": to3D(matMult(to4D(this.shape[i].vertices), transpose(this.ViewMatrix))),
                 "color": this.shape[i].color,
+                "normal": to3D(matMult(to4D([this.shape[i].normal]), transpose(this.ViewMatrix)))[0],
+                "shininess": this.shape[i].shininess,
             }
         }
+        console.log(parsed)
         return parsed
     }
 }
