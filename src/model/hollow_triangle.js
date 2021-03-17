@@ -56,7 +56,6 @@ class HollowTriangle extends HollowObject {
                 "shininess": this.shape[i].shininess,
             }
         }
-        console.log(parsed)
         return parsed
     }
 }
