@@ -45,9 +45,10 @@ class HollowHexagonPrism extends HollowObject {
 
         // temp buffers
         this.temp_vert = [];
-        this.temp_color = []
+        this.temp_color = [];
         this.temp_normal = [];
         this.temp_shininess = [];
+        this.mid = [0, this.side_length / 2, 0];
     }
 
     /**
@@ -58,9 +59,9 @@ class HollowHexagonPrism extends HollowObject {
         // push to temp buffer with face sort
         for (var j = 0; j < 6; j++) {
             for (var k = 0; k < 4; k++) {
-                this.temp_vert.append(point[this.FACE_SORT[j][k] * 3])
-                this.temp_vert.append(point[this.FACE_SORT[j][k] * 3 + 1])
-                this.temp_vert.append(point[this.FACE_SORT[j][k] * 3 + 2])
+                this.temp_vert.push(point[this.FACE_SORT[j][k] * 3])
+                this.temp_vert.push(point[this.FACE_SORT[j][k] * 3 + 1])
+                this.temp_vert.push(point[this.FACE_SORT[j][k] * 3 + 2])
             }
 
             // Prepare to generate normal vector
@@ -76,8 +77,8 @@ class HollowHexagonPrism extends HollowObject {
             ]
             
             // Generate normal and shininess coeff
-            this.temp_normal.append(getNorm2Vec(v1, v2))
-            this.temp_shininess.append(20.0)
+            this.temp_normal.push(getNorm2Vec(v1, v2))
+            this.temp_shininess.push(20.0)
         }
     }
 
@@ -85,7 +86,7 @@ class HollowHexagonPrism extends HollowObject {
      * Generate prism's base or roof
      * @param {bool} is_roof 
      */
-    generate_base(is_roof = false) {
+    generate_base(is_roof=false) {
         // For every faces
         for (var i = 0; i < 6; i++) {
             var curIdx = i;
@@ -127,7 +128,7 @@ class HollowHexagonPrism extends HollowObject {
         for (var i = 0; i < 6; i++) {
             var point = []
             var curIdx = i
-            var prevIdx = (i - 1) % 6
+            var prevIdx = (((i - 1) % 6) + 6) % 6
 
             // for every vertices in the block
             for (var j = 0; j < 8; j++) {
@@ -149,9 +150,9 @@ class HollowHexagonPrism extends HollowObject {
                 if (j > 3) {
                     ylevel = this.frame_thickness + this.side_length
                 }
-                point.append(this.COORD_BASE[i][0] + modx)
-                point.append(ylevel)
-                point.append(this.COORD_BASE[i][1] + modz)
+                point.push(this.COORD_BASE[i][0] + modx)
+                point.push(ylevel)
+                point.push(this.COORD_BASE[i][1] + modz)
             }
 
            this.add_vertices(point)
@@ -193,12 +194,10 @@ class HollowHexagonPrism extends HollowObject {
      * Generate hollow hexagon prism
      */
     generate() {
-        generate_base(is_roof = false);
-        generate_base(is_roof = true);
-        generate_connector();
-        generate_color();
-        this.temp_vert = this.vertices;
-        this.temp_color = this.color;
+        this.generate_base(false);
+        this.generate_base(true);
+        this.generate_connector();
+        this.generate_color();
     }
 
     /**
@@ -207,17 +206,18 @@ class HollowHexagonPrism extends HollowObject {
      * @param {shaderProgram} shaderProgram 
      */
     draw(gl, shaderProgram) { // still placeholder
+        setMatTransform(gl, shaderProgram, "u_View", this.ViewMatrix)
         var vertex_buffer = createBuffer(gl, this.temp_vert)
 
         // bind buffer to attribute in shaders
         bindBuffer(gl, shaderProgram, vertex_buffer, 3, 'position')
-        setVector3D(gl, shaderProgram, "u_color", this.color)
+        setVector3D(gl, shaderProgram, "u_color", new Float32Array(this.temp_color))
 
         // draw every single face with corresponding normals and shininess
         var idx = 0;
         for (var i = 0; i < 24 * 18; i += 4) {
             // set normal and shininess for every shape
-            setVector3D(gl, shaderProgram, "u_normal", this.temp_normal[idx])
+            setVector3D(gl, shaderProgram, "u_normal", new Float32Array(this.temp_normal[idx]))
             gl.uniform1f(gl.getUniformLocation(shaderProgram, "u_shininess"), this.temp_shininess[idx])
 
             gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
@@ -235,13 +235,47 @@ class HollowHexagonPrism extends HollowObject {
      * Parse object to external file
      */
     parse() {
+        for (let i = 0; i < this.vertices.length; i += 12) {
+            var verts = []
+            for (let j = i; j < i + 12 ; j += 3) {
+                verts.push(this.vertices.slice(j, j + 3))
+            }
+            verts = to3D(matMult(to4D(verts), transpose(this.ViewMatrix))).flat()
+            this.vertices.splice(i, 12, ...verts)
+        }
+        for (let i = 0; i < this.normal.length; i += 3) {
+            var norms = this.normal.slice(i, i + 3)
+            norms = to3D(matMult(to4D([this.temp_normal]), transpose(this.ViewMatrix)))[0]
+            this.temp_normal.splice(i, 3, ...norms)
+        }
         let parsed = { 
             "type": "hexagonal_prism",
-            "vertices": to3D(matMult(to4D(this.temp_vert), transpose(this.ViewMatrix))),
-            "color": this.temp,
-            "normal": to3D(matMult(to4D([this.temp_normal), transpose(this.ViewMatrix)))[0],
-            "shininess": this.temp_shininess,
+            "vertices" : this.vertices,
+            "color" : this.colors,
+            "normal" : this.normal,
+            "shininess" : this.shininess        
         }
+
         return parsed
+    }
+
+    /**
+     * Apply the transformation
+     */
+    applyTransformation() {
+        this.mid= to3D(matMult(to4D([this.mid]), transpose(this.ViewMatrix)))[0]
+        for (let i = 0; i < this.temp_vert.length; i += 12) {
+            var verts = []
+            for (let j = i; j < i + 12 ; j += 3) {
+                verts.push(this.temp_vert.slice(j, j + 3))
+            }
+            verts = to3D(matMult(to4D(verts), transpose(this.ViewMatrix))).flat()
+            this.temp_vert.splice(i, 12, ...verts)
+        }
+        for (let i = 0; i < this.temp_normal.length; i++) {
+            var norms = to3D(matMult(to4D([this.temp_normal[i]]), transpose(this.ViewMatrix)))[0]
+            this.temp_normal.splice(i, 1, norms)
+        }
+        this.resetViewMatrix()
     }
 }
