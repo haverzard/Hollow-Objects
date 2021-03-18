@@ -119,7 +119,7 @@ function getOrthoMat(left, right, bottom, top, near, far) {
     oMat[3][3] = 1.0
     var noZ = getIdentityMat()
     noZ[2][2] = 0
-    return matMult(oMat, noZ)
+    return matMult(noZ, oMat)
 }
 
 function getPerspectiveMat(fovy, aspect, near, far) {
@@ -134,6 +134,10 @@ function getPerspectiveMat(fovy, aspect, near, far) {
     return pMat
 }
 
-function getObliqueMat() {
-
+function getObliqueMat(left, right, bottom, top, near, far, xz_deg, yz_deg) {
+    var oMat = getOrthoMat(left, right, bottom, top, near, far)
+    var h = getIdentityMat()
+    h[0][2] = 1 / Math.tan(xz_deg)
+    h[1][2] = 1 / Math.tan(yz_deg)
+    return matMult(oMat, h)
 }

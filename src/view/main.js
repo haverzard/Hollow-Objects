@@ -26,8 +26,8 @@ class MainView {
         // const zFar = 100;
 
         // init matrix transform
-        this.ProjectionMatrix = getOrthoMat(-1, 1, -1, 1, 0, 10)
-        this.ModelMatrix = getTMat([0.0, 0.0, -1.0])
+        this.ProjectionMatrix = getObliqueMat(-1, 1, -1, 1, 0, 10, getRad(60), getRad(-60))
+        this.ModelMatrix = getTMat([0.0, 0.0, -0.0])
         setMatTransform(this.gl, this.shaderProgram, "u_Projection", this.ProjectionMatrix)
         setMatTransform(this.gl, this.shaderProgram, "u_Model", this.ModelMatrix)
         setVector3D(this.gl, this.shaderProgram, "u_ambient", [0.4, 0.4, 0.4])
