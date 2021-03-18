@@ -19,9 +19,15 @@ class MainView {
         // load shader
         this.shaderProgram = loadShader(this.gl, norm2dVertex, colorFrag)
 
+        /** TEST FOR PERSPECTIVE */
+        // const fieldOfView = 45 * Math.PI / 180;   // in radians
+        // const aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
+        // const zNear = 0.1;
+        // const zFar = 100;
+
         // init matrix transform
-        this.ProjectionMatrix = getIdentityMat()
-        this.ModelMatrix = getIdentityMat()
+        this.ProjectionMatrix = getOrthoMat(-1, 1, -1, 1, 0, 10)
+        this.ModelMatrix = getTMat([0.0, 0.0, -1.0])
         setMatTransform(this.gl, this.shaderProgram, "u_Projection", this.ProjectionMatrix)
         setMatTransform(this.gl, this.shaderProgram, "u_Model", this.ModelMatrix)
         setVector3D(this.gl, this.shaderProgram, "u_ambient", [0.4, 0.4, 0.4])

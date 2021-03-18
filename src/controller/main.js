@@ -137,7 +137,7 @@ class Observer {
     }
 
     initObjects() {
-        this.objects = [new HollowPyramid(), new HollowPyramid()]
+        this.objects = [new HollowPyramid(), new HollowPyramid(), new HollowHexagonPrism()]
         this.objects[0].addViewMatrix(getSMat([3, 3, 3]))
         this.objects[0].addViewMatrix(getTMat([0, 0.1, 0]))
         this.objects[0] = new AdaptedHollowPyramid(JSON.stringify(this.objects[0].parse()))
@@ -153,6 +153,9 @@ class Observer {
         this.objects[1].addRotateY(30)
         this.objects[1].addScaling(0.5)
         this.objects[1].applyTransformation()
+
+        this.objects[2].generate()
+        this.objects[2].applyTransformation()
     }
 
     drawObjects(gl, shaderProgram) {
