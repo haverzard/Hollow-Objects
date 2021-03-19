@@ -81,6 +81,10 @@ body {
   margin-right: 50px;
 }
 
+#proj-container {
+  margin-right: 70px;
+}
+
 #proj-sel-container {
   display: flex;
   margin-top: 20px;
@@ -92,4 +96,8 @@ body {
 
 #oblique-sec {
   display: flex;
+}
+
+#cam-radius-container {
+  flex-direction: column;
 }

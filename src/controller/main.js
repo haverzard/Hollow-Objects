@@ -7,6 +7,7 @@ class Observer {
         this.selected = null
         this.mode = MODE.NONE
         this.projMode = PROJ.ORTHO
+        this.initCamConfig()
         this.initProjection()
         this.initObjects()
         this.initInputs()
@@ -17,6 +18,15 @@ class Observer {
         this.applyProjection()
     }
 
+    initCamConfig() {
+        this.camConfig = {
+            "radius": 0,
+            "xRot": 0,
+            "yRot": 0,
+            "zRot": 0
+        }
+    }
+
     initProjection() {
         this.projection = {
             "left": -1,
@@ -25,8 +35,8 @@ class Observer {
             "top": 1,
             "near": 0.01,
             "far": 100,
-            "xz-deg": 60,
-            "yz-deg": 60,
+            "xz-deg": 75,
+            "yz-deg": 75,
             "fovy": 45,
             "aspect": 1,
         }
@@ -197,6 +207,16 @@ class Observer {
         this.drawObjects(this.main.gl, this.main.shaderProgram)
     }
 
+    applyCamConfig() {
+        let matCam = getIdentityMat()
+        matCam = matMult(getTMat([0, 0, -this.camConfig["radius"]]), matCam)
+        matCam = matMult(matCam, getRxMat(this.camConfig["xRot"]))
+        matCam = matMult(matCam, getRyMat(this.camConfig["yRot"]))
+        matCam = matMult(matCam, getRzMat(this.camConfig["zRot"]))
+        setMatTransform(this.main.gl, this.main.shaderProgram, "u_Model", matCam)
+        this.drawObjects(this.main.gl, this.main.shaderProgram)
+    }
+
     resetTrf() {
         modes.forEach((k) => {
             document.getElementById(k+"-sec").hidden = true
@@ -298,6 +318,26 @@ class Observer {
                 }
             }
         })
+
+        document.getElementById("translate-cam").oninput = (e) => {
+            this.camConfig["radius"] = parseFloat(e.target.value)
+            this.applyCamConfig()
+        }
+
+        document.getElementById("rotate-cam0").oninput = (e) => {
+            this.camConfig["xRot"] = parseFloat(e.target.value)
+            this.applyCamConfig()
+        }
+
+        document.getElementById("rotate-cam1").oninput = (e) => {
+            this.camConfig["yRot"] = parseFloat(e.target.value)
+            this.applyCamConfig()
+        }
+
+        document.getElementById("rotate-cam2").oninput = (e) => {
+            this.camConfig["zRot"] = parseFloat(e.target.value)
+            this.applyCamConfig()
+        }
     }
 
     initObjects() {
