@@ -7,12 +7,14 @@ class Observer {
         this.selected = null
         this.mode = MODE.NONE
         this.projMode = PROJ.ORTHO
+        this.objects = []
+
         this.initProjection()
-        this.initObjects()
         this.initInputs()
         this.initButtons()
         this.initTransforms()
-
+        this.initUploader()
+    
         this.main = new MainView(this)
         this.applyProjection()
     }
@@ -37,6 +39,13 @@ class Observer {
             "rotate": [0,0,0],
             "translate": [0,0,0],
             "scale": 1,
+        }
+    }
+
+    initUploader() {
+        var fileUploader = document.getElementById('file-uploader')
+        fileUploader.onchange = (e) => {
+          this.__loadFromFile(e.target.files[0])
         }
     }
 
@@ -300,25 +309,28 @@ class Observer {
         })
     }
 
-    initObjects() {
-        this.objects = [new HollowPyramid(), new HollowPyramid(), new HollowHexagonPrism()]
-        this.objects[0].addViewMatrix(getSMat([3, 3, 3]))
-        this.objects[0].addViewMatrix(getTMat([0, 0.1, 0]))
-        this.objects[0].addViewMatrix(getTMat([0, 0.1, 0]))
-        this.objects[0].addScaling(0.5)
-        this.objects[0].applyTransformation()
+    __loadFromFile(file) {
+        try {
+          const reader = new FileReader(file)
+          reader.addEventListener('load', (e) => {
+            this.initObjects(JSON.parse(e.target.result))
+          })
+          reader.readAsText(file)
+        } catch {
+          console.log('Please use valid model file.')
+        }
+    }
 
-        this.objects[1].addViewMatrix(getSMat([3, 3, 3]))
-        this.objects[1].addViewMatrix(getTMat([0, 0.1, 0]))
-        this.objects[1].applyTransformation()
-        this.objects[1] = new HollowPyramid(JSON.parse(JSON.stringify(this.objects[1].parse())))
-        this.objects[1].addViewMatrix(getTMat([0, 1, 0]))
-        this.objects[1].addRotateX(30)
-        this.objects[1].addRotateY(30)
-        this.objects[1].addScaling(0.5)
-        this.objects[1].applyTransformation()
+    initObjects(data) {
+        this.objects = []
+        data.forEach((obj) => {
+            if (obj["type"] == "triangular_pyramid") {
+                this.objects.push(new HollowPyramid(obj))
+            } else {
 
-        this.objects[2].applyTransformation()
+            }
+        })
+        this.drawObjects(this.main.gl, this.main.shaderProgram)
     }
 
     drawObjects(gl, shaderProgram) {
