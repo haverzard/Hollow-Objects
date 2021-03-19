@@ -122,6 +122,12 @@ class Observer {
             this.initTransforms()
             this.applyTransformation(true)
         }
+        document.getElementById("reset-btn").onclick = () => {
+            this.projMode = PROJ.ORTHO
+            this.initProjection()
+            this.applyProjection()
+            this.resetProjs()
+        }
     }
 
     applyTransformation(perm=false) {
@@ -144,7 +150,7 @@ class Observer {
 
         if (perm) {
             this.objects[this.selected].applyTransformation()
-            this.resetInputs()
+            this.resetTrf()
             document.getElementById(this.mode+'-btn').classList.toggle("selected", false)
             this.mode = MODE.NONE
 
@@ -190,7 +196,7 @@ class Observer {
         this.drawObjects(this.main.gl, this.main.shaderProgram)
     }
 
-    resetInputs() {
+    resetTrf() {
         modes.forEach((k) => {
             document.getElementById(k+"-sec").hidden = true
         })
@@ -199,6 +205,29 @@ class Observer {
                 document.getElementById(k+"-"+i).value = 0
             }
         })
+        document.getElementById("scale").value = 0
+    }
+
+    resetProjs() {
+        proj.forEach((m) => {
+            let t
+            if (m === PROJ.OBLIQUE) {
+                document.getElementById(m+'-sec').childNodes.forEach((child) => {
+                    child.hidden = true
+                })
+                t = ["left", "right", "top", "bottom", "near", "far", "xz", "yz"]
+            } else if (m === PROJ.PSPEC) {
+                document.getElementById(m+'-sec').hidden = true
+                t = ["fovy", "aspect", "near", "far"]
+            } else {
+                document.getElementById(m+'-btn').classList.toggle("selected")
+                t = ["left", "right", "top", "bottom", "near", "far"]
+            }
+            t.forEach((e) => {
+                document.getElementById(m+'-'+e).value = this.projection[e]
+            })
+        })
+
         document.getElementById("scale").value = 0
     }
 
@@ -301,6 +330,20 @@ class Observer {
     }
 
     pointToObject(idx) {
+        // auto cancel transformation
+        if (this.selected != idx && this.mode) {
+            this.initTransforms()
+            this.resetTrf()
+
+            this.objects[this.selected].resetViewMatrix()
+            this.drawObjects(this.main.gl, this.main.shaderProgram)
+
+            document.getElementById(this.mode+'-btn').classList.toggle("selected", false)
+            this.mode = MODE.NONE
+            confirmations.forEach((k) => {
+                document.getElementById(k+'-btn').hidden = true
+            })
+        }
         this.selected = idx
     }
 
