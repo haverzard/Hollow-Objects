@@ -214,6 +214,7 @@ class Observer {
         matCam = matMult(matCam, getRyMat(this.camConfig["yRot"]))
         matCam = matMult(matCam, getRzMat(this.camConfig["zRot"]))
         setMatTransform(this.main.gl, this.main.shaderProgram, "u_Model", matCam)
+        this.main.ModelMatrix = matCam
         this.drawObjects(this.main.gl, this.main.shaderProgram)
     }
 
