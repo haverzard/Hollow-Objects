@@ -49,12 +49,12 @@ class HollowTriangle extends HollowObject {
         if (!this.shape[0] || this.shape[0][0] != -this.length) this.initialize()
         let parsed = {}
         for (let i = 0; i < 3; i++) {
-            parsed["part_"+i] = {
-                "vertices": to3D(matMult(to4D(this.shape[i].vertices), transpose(this.ViewMatrix))),
-                "color": this.shape[i].color,
-                "normal": to3D(matMult(to4D([this.shape[i].normal]), transpose(this.ViewMatrix)))[0],
-                "shininess": this.shape[i].shininess,
-            }
+            parsed["part_"+i] = new Shape(
+                to3D(matMult(to4D(this.shape[i].vertices), transpose(this.ViewMatrix))),
+                this.shape[i].color,
+                to3D(matMult(to4D([this.shape[i].normal]), transpose(this.ViewMatrix)))[0],
+                this.shape[i].shininess,
+            )
         }
         return parsed
     }

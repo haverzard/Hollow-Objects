@@ -5,11 +5,19 @@ const keys = [
 const parts = ["part_0", "part_1", "part_2"]
 
 class HollowPyramid extends HollowObject {
-    constructor(color=[0,1,0]) {
+    constructor(data=null, color=[0,1,0]) {
         super()
-        this.mid = [0,0,0]
-        this.shapes = {}
-        this.generate(color)
+        this.type = "triangular_pyramid"
+        if (data) {
+            this.mid = data.mid
+            this.data = data
+            this._toShape()
+            delete data.mid
+        } else {
+            this.mid = [0,0,0]
+            this.data = {}
+            this.generate(color)
+        }
     }
 
     generate(color) {
@@ -32,7 +40,7 @@ class HollowPyramid extends HollowObject {
             .addViewMatrix(this.ViewMatrix)
         shape.setColor(color)
         shape.setNormal([0, 0, -1])
-        this.shapes["o_bottom"] = shape
+        this.data["o_bottom"] = shape.parse()
 
         /*
             Calculation for Front Side:
@@ -53,7 +61,7 @@ class HollowPyramid extends HollowObject {
                 .addRotateY(i*120)
                 .addViewMatrix(this.ViewMatrix)
             shape.setColor(color)
-            this.shapes["o_front_"+i] = shape
+            this.data["o_front_"+i] = shape.parse()
         }
 
         /* Inner */
@@ -70,7 +78,7 @@ class HollowPyramid extends HollowObject {
             .addScaling(0.2)
             .addViewMatrix(this.ViewMatrix)
         shape.setColor(color)
-        this.shapes["i_bottom"] = shape
+        this.data["i_bottom"] = shape.parse()
 
         /*
             Calculation for Front Side:
@@ -92,24 +100,54 @@ class HollowPyramid extends HollowObject {
                 .addViewMatrix(this.ViewMatrix)
             shape.setColor(color)
             shape.setNormal([0, 0, -1])
-            this.shapes["i_front_"+i] = shape
+            this.data["i_front_"+i] = shape.parse()
         }
     }
 
+    _toShape() {
+        keys.forEach((k) => {
+            for (let i = 0; i < 3; i++) {
+                let part = this.data[k][parts[i]]
+                this.data[k][parts[i]] = new Shape(part["vertices"], part["color"], part["normal"], part["shininess"])
+            }
+        })
+    }
+
     draw(gl, shaderProgram) {
-        this.shapes.forEach((shape) => {
-            shape.draw(gl, shaderProgram)
+        setMatTransform(gl, shaderProgram, "u_View", this.ViewMatrix)
+        keys.forEach((k) => {
+            for (let i = 0; i < 3; i++) {
+                this.data[k][parts[i]].draw(gl, shaderProgram)
+            }
         })
     }
 
     parse() {
+        console.log(this.data)
         let parsed = { "type": "triangular_pyramid", "mid": this.mid }
         keys.forEach((k) => {
-            let o = this.shapes[k].ViewMatrix
-            this.shapes[k].addViewMatrix(this.ViewMatrix)
-            parsed[k] = this.shapes[k].parse()
-            this.shapes[k].setViewMatrix(o)
+            parsed[k] = {}
+            for (let i = 0; i < 3; i++) {
+                let shape = this.data[k][parts[i]]
+                parsed[k][parts[i]] = {
+                    "vertices": shape.vertices,
+                    "color": shape.color,
+                    "normal": shape.normal,
+                    "shininess": shape.shininess,
+                }
+            }
         })
         return parsed
+    }
+    
+    applyTransformation() {
+        this.mid= to3D(matMult(to4D([this.mid]), transpose(this.ViewMatrix)))[0]
+        keys.forEach((k) => {
+            for (let i = 0; i < 3; i++) {
+                this.data[k][parts[i]]["vertices"] = to3D(matMult(to4D(this.data[k][parts[i]]["vertices"]), transpose(this.ViewMatrix)))
+                this.data[k][parts[i]]["normal"] = to3D(matMult(to4D([this.data[k][parts[i]]["normal"]]), transpose(this.ViewMatrix)))[0]
+            }
+        })
+        this.resetViewMatrix()
     }
 }

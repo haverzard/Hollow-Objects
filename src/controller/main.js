@@ -140,14 +140,14 @@ class Observer {
         this.objects = [new HollowPyramid(), new HollowPyramid()]
         this.objects[0].addViewMatrix(getSMat([3, 3, 3]))
         this.objects[0].addViewMatrix(getTMat([0, 0.1, 0]))
-        this.objects[0] = new AdaptedHollowPyramid(JSON.stringify(this.objects[0].parse()))
         this.objects[0].addViewMatrix(getTMat([0, 0.1, 0]))
         this.objects[0].addScaling(0.5)
         this.objects[0].applyTransformation()
 
         this.objects[1].addViewMatrix(getSMat([3, 3, 3]))
         this.objects[1].addViewMatrix(getTMat([0, 0.1, 0]))
-        this.objects[1] = new AdaptedHollowPyramid(JSON.stringify(this.objects[1].parse()))
+        this.objects[1].applyTransformation()
+        this.objects[1] = new HollowPyramid(JSON.parse(JSON.stringify(this.objects[1].parse())))
         this.objects[1].addViewMatrix(getTMat([0, 1, 0]))
         this.objects[1].addRotateX(30)
         this.objects[1].addRotateY(30)
