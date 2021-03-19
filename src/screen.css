@@ -80,3 +80,16 @@ body {
 #trf-container > * {
   margin-right: 50px;
 }
+
+#proj-sel-container {
+  display: flex;
+  margin-top: 20px;
+}
+
+#ortho-sec {
+  display: flex;
+}
+
+#oblique-sec {
+  display: flex;
+}

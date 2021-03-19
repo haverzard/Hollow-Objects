@@ -19,6 +19,7 @@ class MainView {
         // load shader
         this.shaderProgram = loadShader(this.gl, norm2dVertex, colorFrag)
 
+
         // init matrix transform
         this.ProjectionMatrix = getIdentityMat()
         this.ModelMatrix = getIdentityMat()

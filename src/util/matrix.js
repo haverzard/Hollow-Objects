@@ -107,3 +107,37 @@ function getRzMat(degree) {
     mat[1][0] = s
     return mat
 }
+
+function getOrthoMat(left, right, bottom, top, near, far) {
+    var oMat = getZeroMat()
+    oMat[0][0] = 2 / (right - left)
+    oMat[1][1] = 2 / (top - bottom)
+    oMat[2][2] = - 2 / (far - near)
+    oMat[0][3] = - (left + right) / (right - left)
+    oMat[1][3] = - (top + bottom) / (top - bottom)
+    oMat[2][3] = - (far + near) / (far - near)
+    oMat[3][3] = 1.0
+    var noZ = getIdentityMat()
+    noZ[2][2] = 0
+    return matMult(noZ, oMat)
+}
+
+function getPerspectiveMat(fovy, aspect, near, far) {
+    var pMat = getZeroMat()
+    var top = near * Math.tan(fovy / 2)
+    var right = top * aspect
+    pMat[0][0] = near / right
+    pMat[1][1] = near / top
+    pMat[2][2] = - (far + near) / (far - near)
+    pMat[2][3] = - (2 * far * near) / (far - near)
+    pMat[3][2] = -1.0
+    return pMat
+}
+
+function getObliqueMat(left, right, bottom, top, near, far, xz_deg, yz_deg) {
+    var oMat = getOrthoMat(left, right, bottom, top, near, far)
+    var h = getIdentityMat()
+    h[0][2] = 1 / Math.tan(xz_deg)
+    h[1][2] = 1 / Math.tan(yz_deg)
+    return matMult(oMat, h)
+}

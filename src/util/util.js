@@ -1,5 +1,6 @@
 const ASPECT_RATIO = 1
 const MODE = Object.freeze({ NONE: null, ROTATE: "rotate", TRANSLATE: "translate", SCALE: "scale" })
+const PROJ = Object.freeze({ ORTHO: "ortho", PSPEC: "pspec", OBLIQUE: "oblique"})
 
 function normalizeX(canvas, x) {
     return (x * 2) / canvas.width - 1
@@ -49,7 +50,7 @@ function toggleHelpMenu() {
 }
 
 function crossProd(v1, v2) {
-    let xcomp = v1[1] * v2[2] - v1[2] * v2[2]
+    let xcomp = v1[1] * v2[2] - v1[2] * v2[1]
     let ycomp = v1[0] * v2[2] - v1[2] * v2[0]
     let zcomp = v1[0] * v2[1] - v1[1] * v2[0]
     

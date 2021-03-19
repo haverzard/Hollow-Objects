@@ -13,6 +13,7 @@
     <script src="model/hollow_object.js"></script>
     <script src="model/hollow_triangle.js"></script>
     <script src="model/hollow_pyramid.js"></script>
+    <script src="model/hollow_hexagon_prism.js"></script>
     <script src="model/shape.js"></script>
     <script src="controller/main.js"></script>
     <script src="shaders/norm_vertex.js"></script>
@@ -67,6 +68,82 @@
             <div id="confirm-container">
               <button id="apply-btn">Apply</button>
               <button id="cancel-btn">Cancel</button>
+            </div>
+            <div id="proj-sel-container">
+              <button id="ortho-btn">Orthogonal</button>
+              <button id="pspec-btn">Perspective</button>
+              <button id="oblique-btn">Oblique</button>
+              <button id="reset-btn">Reset</button>
+            </div>
+            <div id="proj-config-container">
+              <section id="ortho-sec">
+                <div>
+                  <label>Left</label><br/>
+                  <input id="ortho-left" type="number" value=-1>
+                  <br/>
+                  <label>Right</label><br/>
+                  <input id="ortho-right" type="number" value=1>
+                  <br/>
+                  <label>Bottom</label><br/>
+                  <input id="ortho-bottom" type="number" value=-1>
+                  <br/>
+                </div>
+                <div>
+                  <label>Top</label><br/>
+                  <input id="ortho-top" type="number" value=1>
+                  <br/>
+                  <label>Near</label><br/>
+                  <input id="ortho-near" type="number" value=0.01>
+                  <br/>
+                  <label>Far</label><br/>
+                  <input id="ortho-far" type="number" value=100>
+                  <br/>
+                </div>
+              </section>
+              <section id="pspec-sec">
+                <label>Fovy (deg)</label><br/>
+                <input id="pspec-fovy" type="number" value=45>
+                <br/>
+                <label>Aspect</label><br/>
+                <input id="pspec-aspect" type="number" value=1>
+                <br/>
+                <label>Near</label><br/>
+                <input id="pspec-near" type="number" value=0.01>
+                <br/>
+                <label>Far</label><br/>
+                <input id="pspec-far" type="number" value=100>
+                <br/>
+              </section>
+              <section id="oblique-sec">
+                <div>
+                  <label>Left</label><br/>
+                  <input id="oblique-left" type="number" value=-1>
+                  <br/>
+                  <label>Right</label><br/>
+                  <input id="oblique-right" type="number" value=1>
+                  <br/>
+                  <label>Bottom</label><br/>
+                  <input id="oblique-bottom" type="number" value=-1>
+                  <br/>
+                  <label>Top</label><br/>
+                  <input id="oblique-top" type="number" value=1>
+                  <br/>
+                </div>
+                <div>
+                  <label>Near</label><br/>
+                  <input id="oblique-near" type="number" value=0.01>
+                  <br/>
+                  <label>Far</label><br/>
+                  <input id="oblique-far" type="number" value=100>
+                  <br/>
+                  <label>XZ-degree</label><br/>
+                  <input id="oblique-xz" type="number" value=60>
+                  <br/>
+                  <label>YZ-degree</label><br/>
+                  <input id="oblique-yz" type="number" value=60>
+                  <br/>
+                </div>
+              </section>
             </div>
         </div>
         </section>

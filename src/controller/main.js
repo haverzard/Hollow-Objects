@@ -1,16 +1,35 @@
 const modes = ["rotate", "translate", "scale"]
+const proj = ["ortho", "pspec", "oblique"]
 const confirmations = ["apply", "cancel"]
 
 class Observer {
     constructor() {
         this.selected = null
         this.mode = MODE.NONE
+        this.projMode = PROJ.ORTHO
+        this.initProjection()
         this.initObjects()
         this.initInputs()
         this.initButtons()
         this.initTransforms()
 
         this.main = new MainView(this)
+        this.applyProjection()
+    }
+
+    initProjection() {
+        this.projection = {
+            "left": -1,
+            "right": 1,
+            "bottom": -1,
+            "top": 1,
+            "near": 0.01,
+            "far": 100,
+            "xz-deg": 60,
+            "yz-deg": 60,
+            "fovy": 45,
+            "aspect": 1,
+        }
     }
 
     initTransforms() {
@@ -59,6 +78,39 @@ class Observer {
             }
         })
 
+        proj.forEach((m) => {
+            if (m === PROJ.OBLIQUE) {
+                document.getElementById(m+'-sec').childNodes.forEach((child) => {
+                    child.hidden = true
+                })
+            } else if (m === PROJ.PSPEC) {
+                document.getElementById(m+'-sec').hidden = true
+            } else {
+                document.getElementById(m+'-btn').classList.toggle("selected")
+            }
+            document.getElementById(m+"-btn").onclick = () => {
+                document.getElementById(this.projMode+'-btn').classList.toggle("selected", false)
+                if (this.projMode !== PROJ.PSPEC) {
+                    document.getElementById(this.projMode+'-sec').childNodes.forEach((child) => {
+                        child.hidden = true
+                    })
+                } else {
+                    document.getElementById(this.projMode+'-sec').hidden = true
+                }
+
+                this.projMode = m
+                if (m !== PROJ.PSPEC) {
+                    document.getElementById(m+'-sec').childNodes.forEach((child) => {
+                        child.hidden = false
+                    })
+                } else {
+                    document.getElementById(m+'-sec').hidden = false
+                }
+                document.getElementById(m+'-btn').classList.toggle("selected")
+                this.applyProjection();
+            }
+        })
+
         confirmations.forEach((k) => {
             document.getElementById(k+'-btn').hidden = true
         })
@@ -69,6 +121,12 @@ class Observer {
         document.getElementById("cancel-btn").onclick = () => {
             this.initTransforms()
             this.applyTransformation(true)
+        }
+        document.getElementById("reset-btn").onclick = () => {
+            this.projMode = PROJ.ORTHO
+            this.initProjection()
+            this.applyProjection()
+            this.resetProjs()
         }
     }
 
@@ -92,7 +150,7 @@ class Observer {
 
         if (perm) {
             this.objects[this.selected].applyTransformation()
-            this.resetInputs()
+            this.resetTrf()
             document.getElementById(this.mode+'-btn').classList.toggle("selected", false)
             this.mode = MODE.NONE
 
@@ -104,7 +162,41 @@ class Observer {
         this.drawObjects(this.main.gl, this.main.shaderProgram)
     }
 
-    resetInputs() {
+    applyProjection() {
+        let projectionMatrix
+        if (this.projMode === PROJ.ORTHO) { 
+            projectionMatrix = getOrthoMat(
+                this.projection["left"],
+                this.projection["right"],
+                this.projection["bottom"],
+                this.projection["top"],
+                this.projection["near"],
+                this.projection["far"]
+            )
+        } else if (this.projMode === PROJ.PSPEC) {
+            projectionMatrix = getPerspectiveMat(
+                this.projection["fovy"],
+                this.projection["aspect"],
+                this.projection["near"],
+                this.projection["far"]
+            )
+        } else {
+            projectionMatrix = getObliqueMat(
+                this.projection["left"],
+                this.projection["right"],
+                this.projection["bottom"],
+                this.projection["top"],
+                this.projection["near"],
+                this.projection["far"],
+                this.projection["xz-deg"],
+                this.projection["yz-deg"]
+            )
+        }
+        setMatTransform(this.main.gl, this.main.shaderProgram, "u_Projection", projectionMatrix)
+        this.drawObjects(this.main.gl, this.main.shaderProgram)
+    }
+
+    resetTrf() {
         modes.forEach((k) => {
             document.getElementById(k+"-sec").hidden = true
         })
@@ -116,6 +208,29 @@ class Observer {
         document.getElementById("scale").value = 0
     }
 
+    resetProjs() {
+        proj.forEach((m) => {
+            let t
+            if (m === PROJ.OBLIQUE) {
+                document.getElementById(m+'-sec').childNodes.forEach((child) => {
+                    child.hidden = true
+                })
+                t = ["left", "right", "top", "bottom", "near", "far", "xz", "yz"]
+            } else if (m === PROJ.PSPEC) {
+                document.getElementById(m+'-sec').hidden = true
+                t = ["fovy", "aspect", "near", "far"]
+            } else {
+                document.getElementById(m+'-btn').classList.toggle("selected")
+                t = ["left", "right", "top", "bottom", "near", "far"]
+            }
+            t.forEach((e) => {
+                document.getElementById(m+'-'+e).value = this.projection[e]
+            })
+        })
+
+        document.getElementById("scale").value = 0
+    }
+
     initInputs() {
         modes.forEach((k) => {
             document.getElementById(k+"-sec").hidden = true
@@ -124,20 +239,68 @@ class Observer {
         modes.slice(0, 2).forEach((k) => {
             for (let i = 0; i < 3; i++) {
                 document.getElementById(k+"-"+i).oninput = (e) => {
-                    this.transform[k][i] = e.target.value
+                    this.transform[k][i] = parseFloat(e.target.value)
                     this.applyTransformation()
                 }
             }
         })
 
         document.getElementById("scale").oninput = (e) => {
-            this.transform["scale"] = e.target.value
+            this.transform["scale"] = parseFloat(e.target.value)
             this.applyTransformation()
         }
+
+        proj.forEach((p) => {
+            document.getElementById(p+'-near').oninput = (e) => {
+                this.projection["near"] = parseFloat(e.target.value)
+                this.applyProjection()
+            }
+            document.getElementById(p+'-far').oninput = (e) => {
+                this.projection["far"] = parseFloat(e.target.value)
+                this.applyProjection()
+            }
+            if (p !== PROJ.PSPEC) {
+                document.getElementById(p+'-left').oninput = (e) => {
+                    this.projection["left"] = parseFloat(e.target.value)
+                    this.applyProjection()
+                }
+                document.getElementById(p+'-right').oninput = (e) => {
+                    this.projection["right"] = parseFloat(e.target.value)
+                    this.applyProjection()
+                }
+                document.getElementById(p+'-bottom').oninput = (e) => {
+                    this.projection["bottom"] = parseFloat(e.target.value)
+                    this.applyProjection()
+                }
+                document.getElementById(p+'-top').oninput = (e) => {
+                    this.projection["top"] = parseFloat(e.target.value)
+                    this.applyProjection()
+                }
+            } else {
+                document.getElementById(p+'-fovy').oninput = (e) => {
+                    this.projection["fovy"] = parseFloat(e.target.value)
+                    this.applyProjection()
+                }
+                document.getElementById(p+'-aspect').oninput = (e) => {
+                    this.projection["aspect"] = parseFloat(e.target.value)
+                    this.applyProjection()
+                }
+            }
+            if (p === PROJ.OBLIQUE) {
+                document.getElementById(p+'-xz').oninput = (e) => {
+                    this.projection["xz-deg"] = parseFloat(e.target.value)
+                    this.applyProjection()
+                }
+                document.getElementById(p+'-yz').oninput = (e) => {
+                    this.projection["yz-deg"] = parseFloat(e.target.value)
+                    this.applyProjection()
+                }
+            }
+        })
     }
 
     initObjects() {
-        this.objects = [new HollowPyramid(), new HollowPyramid()]
+        this.objects = [new HollowPyramid(), new HollowPyramid(), new HollowHexagonPrism()]
         this.objects[0].addViewMatrix(getSMat([3, 3, 3]))
         this.objects[0].addViewMatrix(getTMat([0, 0.1, 0]))
         this.objects[0].addViewMatrix(getTMat([0, 0.1, 0]))
@@ -153,6 +316,8 @@ class Observer {
         this.objects[1].addRotateY(30)
         this.objects[1].addScaling(0.5)
         this.objects[1].applyTransformation()
+
+        this.objects[2].applyTransformation()
     }
 
     drawObjects(gl, shaderProgram) {
@@ -165,6 +330,20 @@ class Observer {
     }
 
     pointToObject(idx) {
+        // auto cancel transformation
+        if (this.selected != idx && this.mode) {
+            this.initTransforms()
+            this.resetTrf()
+
+            this.objects[this.selected].resetViewMatrix()
+            this.drawObjects(this.main.gl, this.main.shaderProgram)
+
+            document.getElementById(this.mode+'-btn').classList.toggle("selected", false)
+            this.mode = MODE.NONE
+            confirmations.forEach((k) => {
+                document.getElementById(k+'-btn').hidden = true
+            })
+        }
         this.selected = idx
     }
 
