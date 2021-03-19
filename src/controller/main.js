@@ -210,60 +210,60 @@ class Observer {
         modes.slice(0, 2).forEach((k) => {
             for (let i = 0; i < 3; i++) {
                 document.getElementById(k+"-"+i).oninput = (e) => {
-                    this.transform[k][i] = e.target.value
+                    this.transform[k][i] = parseFloat(e.target.value)
                     this.applyTransformation()
                 }
             }
         })
 
         document.getElementById("scale").oninput = (e) => {
-            this.transform["scale"] = e.target.value
+            this.transform["scale"] = parseFloat(e.target.value)
             this.applyTransformation()
         }
 
         proj.forEach((p) => {
             document.getElementById(p+'-near').oninput = (e) => {
-                this.projection["near"] = parseInt(e.target.value)
+                this.projection["near"] = parseFloat(e.target.value)
                 this.applyProjection()
             }
             document.getElementById(p+'-far').oninput = (e) => {
-                this.projection["far"] = parseInt(e.target.value)
+                this.projection["far"] = parseFloat(e.target.value)
                 this.applyProjection()
             }
             if (p !== PROJ.PSPEC) {
                 document.getElementById(p+'-left').oninput = (e) => {
-                    this.projection["left"] = parseInt(e.target.value)
+                    this.projection["left"] = parseFloat(e.target.value)
                     this.applyProjection()
                 }
                 document.getElementById(p+'-right').oninput = (e) => {
-                    this.projection["right"] = parseInt(e.target.value)
+                    this.projection["right"] = parseFloat(e.target.value)
                     this.applyProjection()
                 }
                 document.getElementById(p+'-bottom').oninput = (e) => {
-                    this.projection["bottom"] = parseInt(e.target.value)
+                    this.projection["bottom"] = parseFloat(e.target.value)
                     this.applyProjection()
                 }
                 document.getElementById(p+'-top').oninput = (e) => {
-                    this.projection["top"] = parseInt(e.target.value)
+                    this.projection["top"] = parseFloat(e.target.value)
                     this.applyProjection()
                 }
             } else {
                 document.getElementById(p+'-fovy').oninput = (e) => {
-                    this.projection["fovy"] = parseInt(e.target.value)
+                    this.projection["fovy"] = parseFloat(e.target.value)
                     this.applyProjection()
                 }
                 document.getElementById(p+'-aspect').oninput = (e) => {
-                    this.projection["aspect"] = parseInt(e.target.value)
+                    this.projection["aspect"] = parseFloat(e.target.value)
                     this.applyProjection()
                 }
             }
             if (p === PROJ.OBLIQUE) {
                 document.getElementById(p+'-xz').oninput = (e) => {
-                    this.projection["xz-deg"] = parseInt(e.target.value)
+                    this.projection["xz-deg"] = parseFloat(e.target.value)
                     this.applyProjection()
                 }
                 document.getElementById(p+'-yz').oninput = (e) => {
-                    this.projection["yz-deg"] = parseInt(e.target.value)
+                    this.projection["yz-deg"] = parseFloat(e.target.value)
                     this.applyProjection()
                 }
             }
