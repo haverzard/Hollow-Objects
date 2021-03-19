@@ -326,8 +326,10 @@ class Observer {
         data.forEach((obj) => {
             if (obj["type"] == "triangular_pyramid") {
                 this.objects.push(new HollowPyramid(obj))
-            } else {
-
+            } else if (obj["type"] == "hexagonal_prism") {
+                this.objects.push(new HollowHexagonPrism(obj))
+            } else  {
+                // Fill here
             }
         })
         this.drawObjects(this.main.gl, this.main.shaderProgram)
