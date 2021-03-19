@@ -231,7 +231,6 @@ class Observer {
                 this.applyProjection()
             }
             if (p !== PROJ.PSPEC) {
-                console.log(this.projMode)
                 document.getElementById(p+'-left').oninput = (e) => {
                     this.projection["left"] = parseInt(e.target.value)
                     this.applyProjection()
@@ -260,11 +259,11 @@ class Observer {
             }
             if (p === PROJ.OBLIQUE) {
                 document.getElementById(p+'-xz').oninput = (e) => {
-                    this.projection["xz-deg"] = e.target.value
+                    this.projection["xz-deg"] = parseInt(e.target.value)
                     this.applyProjection()
                 }
                 document.getElementById(p+'-yz').oninput = (e) => {
-                    this.projection["yz-deg"] = e.target.value
+                    this.projection["yz-deg"] = parseInt(e.target.value)
                     this.applyProjection()
                 }
             }
