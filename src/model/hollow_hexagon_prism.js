@@ -75,7 +75,7 @@ class HollowHexagonPrism extends HollowObject {
                 point[this.FACE_SORT[j][3] * 3 + 1] - point[this.FACE_SORT[j][0] * 3 + 1],
                 point[this.FACE_SORT[j][3] * 3 + 2] - point[this.FACE_SORT[j][0] * 3 + 2]
             ]
-            
+
             // Generate normal and shininess coeff
             this.temp_normal.push(getNorm2Vec(v1, v2))
             this.temp_shininess.push(20.0)
