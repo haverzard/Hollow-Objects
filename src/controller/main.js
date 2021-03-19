@@ -123,6 +123,7 @@ class Observer {
             this.applyTransformation(true)
         }
         document.getElementById("reset-btn").onclick = () => {
+            document.getElementById(this.projMode+'-btn').classList.toggle("selected")
             this.projMode = PROJ.ORTHO
             this.initProjection()
             this.applyProjection()
