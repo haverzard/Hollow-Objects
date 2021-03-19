@@ -1,9 +1,3 @@
-const keys = [
-    "o_bottom", "o_front_0", "o_front_1", "o_front_2",
-    "i_bottom", "i_front_0", "i_front_1", "i_front_2"
-]
-const parts = ["part_0", "part_1", "part_2"]
-
 class AdaptedHollowPyramid extends HollowObject {
     constructor(data) {
         super()
