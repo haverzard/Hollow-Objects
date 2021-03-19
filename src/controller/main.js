@@ -138,6 +138,7 @@ class Observer {
             this.initProjection()
             this.applyProjection()
             this.resetProjs()
+            this.resetCam()
         }
     }
 
@@ -251,6 +252,15 @@ class Observer {
         })
 
         document.getElementById("scale").value = 0
+    }
+
+    resetCam() {
+        this.initCamConfig()
+        this.applyCamConfig()
+        document.getElementById("translate-cam").value = 0
+        document.getElementById("rotate-cam0").value = 0
+        document.getElementById("rotate-cam1").value = 0
+        document.getElementById("rotate-cam2").value = 0
     }
 
     initInputs() {
