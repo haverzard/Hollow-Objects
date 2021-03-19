@@ -213,12 +213,12 @@ class HollowHexagonPrism extends HollowObject {
 
         // bind buffer to attribute in shaders
         bindBuffer(gl, shaderProgram, vertex_buffer, 3, 'position')
-        setVector3D(gl, shaderProgram, "u_color", new Float32Array(this.temp_color))
 
         // draw every single face with corresponding normals and shininess
         var idx = 0;
         for (var i = 0; i < 24 * 18; i += 4) {
             // set normal and shininess for every shape
+            setVector3D(gl, shaderProgram, "u_color", new Float32Array(this.temp_color.slice(idx*3, idx*3+3)))
             setVector3D(gl, shaderProgram, "u_normal", new Float32Array(this.temp_normal[idx]))
             gl.uniform1f(gl.getUniformLocation(shaderProgram, "u_shininess"), this.temp_shininess[idx])
 
