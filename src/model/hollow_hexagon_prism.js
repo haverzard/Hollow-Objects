@@ -49,6 +49,8 @@ class HollowHexagonPrism extends HollowObject {
         this.temp_normal = [];
         this.temp_shininess = [];
         this.mid = [0, this.side_length / 2, 0];
+
+        this.generate()
     }
 
     /**
