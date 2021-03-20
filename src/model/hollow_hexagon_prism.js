@@ -268,6 +268,7 @@ class HollowHexagonPrism extends HollowObject {
             "type": "hexagonal_prism",
             "side_length": this.side_length,
             "frame_thickness": this.frame_thickness,
+            "mid": this.mid,
             "vertices" : this.temp_vert,
             "colors" : this.temp_color,
             "normal" : this.temp_normal,
