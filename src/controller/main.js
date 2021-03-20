@@ -50,25 +50,6 @@ class Observer {
     }
 
     initButtons() {
-        for (let i = 0; i < this.objects.length; i++) {
-            var button = document.createElement("button")
-            button.textContent = "Object "+i
-            document.getElementById('btn-container').appendChild(button)
-            button.onclick = () => {
-                if (this.selected !== null) {
-                    document.getElementById('btn-container')
-                        .children[this.selected]
-                        .classList.toggle("selected", false)
-                }
-                this.pointToObject(i)
-                document.getElementById('btn-container').children[i].classList.toggle("selected")
-
-                modes.forEach((k) => {
-                    document.getElementById(k+'-btn').hidden = false
-                })
-            }
-        }
-
         modes.forEach((k) => {
             document.getElementById(k+"-btn").hidden = true
             document.getElementById(k+"-btn").onclick = () => {
@@ -230,15 +211,25 @@ class Observer {
                 document.getElementById(m+'-sec').hidden = true
                 t = ["fovy", "aspect", "near", "far"]
             } else {
+                document.getElementById(m+'-sec').childNodes.forEach((child) => {
+                    child.hidden = false
+                })
                 document.getElementById(m+'-btn').classList.toggle("selected")
                 t = ["left", "right", "top", "bottom", "near", "far"]
             }
             t.forEach((e) => {
-                document.getElementById(m+'-'+e).value = this.projection[e]
+                let val
+                if (["xz", "yz"].includes(e)) {
+                    val = this.projection[e+"-deg"]
+                } else {
+                    val = this.projection[e]
+                }
+                document.getElementById(m+'-'+e).value = val
             })
         })
 
         document.getElementById("scale").value = 0
+
     }
 
     initInputs() {
@@ -321,6 +312,47 @@ class Observer {
         }
     }
 
+    _resetTransform() {
+        this.initTransforms()
+        this.resetTrf()
+        if (this.mode)
+            document.getElementById(this.mode+'-btn').classList.toggle("selected", false)
+
+        this.mode = MODE.NONE
+        this.selected = null
+        modes.forEach((k) => {
+            document.getElementById(k+'-btn').hidden = true
+        })
+        modes.forEach((k) => {
+            document.getElementById(k+'-sec').hidden = true
+        })
+        confirmations.forEach((k) => {
+            document.getElementById(k+'-btn').hidden = true
+        })
+    }
+
+    _initObjectButtons() {
+        document.getElementById('btn-container').innerHTML = ""
+        for (let i = 0; i < this.objects.length; i++) {
+            var button = document.createElement("button")
+            button.textContent = "Object "+i
+            document.getElementById('btn-container').appendChild(button)
+            button.onclick = () => {
+                if (this.selected !== null) {
+                    document.getElementById('btn-container')
+                        .children[this.selected]
+                        .classList.toggle("selected", false)
+                }
+                this.pointToObject(i)
+                document.getElementById('btn-container').children[i].classList.toggle("selected")
+
+                modes.forEach((k) => {
+                    document.getElementById(k+'-btn').hidden = false
+                })
+            }
+        }
+    }
+
     initObjects(data) {
         this.objects = []
         data.forEach((obj) => {
@@ -332,6 +364,8 @@ class Observer {
                 // Fill here
             }
         })
+        this._resetTransform()
+        this._initObjectButtons()
         this.drawObjects(this.main.gl, this.main.shaderProgram)
     }
 
