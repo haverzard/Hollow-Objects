@@ -28,6 +28,7 @@ class MainView {
         setVector3D(this.gl, this.shaderProgram, "u_ambient", [0.4, 0.4, 0.4])
         setVector3D(this.gl, this.shaderProgram, "u_viewer", [-1, -1, 1])
         setVector3D(this.gl, this.shaderProgram, "u_light", [-1, -1, 1])
+        this.gl.uniform1f(this.gl.getUniformLocation(this.shaderProgram, "u_shading"), true)
 
         this.observer.drawObjects(this.gl, this.shaderProgram)
     }

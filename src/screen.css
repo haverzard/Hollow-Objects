@@ -58,6 +58,10 @@ body {
   background-color: #666;
 }
 
+.selected-on {
+  background-color: #0C9;
+}
+
 #left-side {
   margin-top: 50px;
   margin-left: 50px;

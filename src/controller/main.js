@@ -8,6 +8,7 @@ class Observer {
         this.mode = MODE.NONE
         this.projMode = PROJ.ORTHO
         this.objects = []
+        this.shading = []
 
         this.initCamConfig()
         this.initProjection()
@@ -129,6 +130,14 @@ class Observer {
             this.applyProjection()
             this.resetProjs()
             this.resetCam()
+        }
+        document.getElementById("shading-btn").hidden = true
+        document.getElementById("shading-btn").onclick = () => {
+            if (this.selected !== null) {
+                this.shading[this.selected] = !this.shading[this.selected]
+            }
+            document.getElementById("shading-btn").classList.toggle("selected-on")
+            this.drawObjects(this.main.gl, this.main.shaderProgram)
         }
     }
 
@@ -393,13 +402,15 @@ class Observer {
                     document.getElementById('btn-container')
                         .children[this.selected]
                         .classList.toggle("selected", false)
+                } else {
+                    modes.forEach((k) => {
+                        document.getElementById(k+'-btn').hidden = false
+                    })
+                    document.getElementById('shading-btn').hidden = false
                 }
                 this.pointToObject(i)
                 document.getElementById('btn-container').children[i].classList.toggle("selected")
 
-                modes.forEach((k) => {
-                    document.getElementById(k+'-btn').hidden = false
-                })
             }
         }
     }
@@ -414,6 +425,7 @@ class Observer {
             } else  {
                 // Fill here
             }
+            this.shading.push(true)
         })
         this._resetTransform()
         this._initObjectButtons()
@@ -425,6 +437,7 @@ class Observer {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
         this.objects.forEach((obj, i) => {
+            gl.uniform1f(gl.getUniformLocation(shaderProgram, "u_shading"), this.shading[i])
             obj.draw(gl, shaderProgram)
         })
     }
@@ -444,6 +457,7 @@ class Observer {
                 document.getElementById(k+'-btn').hidden = true
             })
         }
+        document.getElementById("shading-btn").classList.toggle("selected-on", this.shading[idx])
         this.selected = idx
     }
 
