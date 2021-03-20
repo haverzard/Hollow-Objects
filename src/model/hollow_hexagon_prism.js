@@ -3,12 +3,19 @@ class HollowHexagonPrism extends HollowObject {
      * Constructor
      * @param {int} side_length 
      * @param {int} frame_thickness 
+     * @param {JSON} data
      */
-    constructor(side_length = 1, frame_thickness = 0.1) {
+    constructor(data = null, side_length = 1, frame_thickness = 0.1) {
         super()
-        this.side_length = side_length;
-        this.frame_thickness = frame_thickness;
-
+        // load from ext file
+        if (data) {
+            this.side_length = data["side_length"];
+            this.frame_thickness = data["frame_thickness"];
+        } else {
+            this.side_length = side_length;
+            this.frame_thickness = frame_thickness;
+        }
+        
         // rad version of angles
         let rad_60 = getRad(60);
         let rad_30 = getRad(30);
@@ -43,14 +50,22 @@ class HollowHexagonPrism extends HollowObject {
             [0, 4, 7, 3]
         ]
 
-        // temp buffers
-        this.temp_vert = [];
-        this.temp_color = [];
-        this.temp_normal = [];
-        this.temp_shininess = [];
-        this.mid = [0, this.side_length / 2, 0];
-
-        this.generate()
+        if (data) {
+            // load data from ext file
+            this.temp_vert = data["vertices"]
+            this.temp_color = data["colors"]
+            this.temp_normal = data["normal"]
+            this.temp_shininess = data["shininess"]
+            this.mid = data["mid"]
+        } else {
+            // temp buffers to generate
+            this.temp_vert = [];
+            this.temp_color = [];
+            this.temp_normal = [];
+            this.temp_shininess = [];
+            this.mid = [0, this.side_length / 2, 0];
+            this.generate()
+        }
     }
 
     /**
@@ -251,8 +266,10 @@ class HollowHexagonPrism extends HollowObject {
         }
         let parsed = { 
             "type": "hexagonal_prism",
+            "side_length": this.side_length,
+            "frame_thickness": this.frame_thickness,
             "vertices" : this.temp_vert,
-            "color" : this.temp_color,
+            "colors" : this.temp_color,
             "normal" : this.temp_normal,
             "shininess" : this.temp_shininess        
         }

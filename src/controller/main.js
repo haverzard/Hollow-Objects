@@ -7,13 +7,15 @@ class Observer {
         this.selected = null
         this.mode = MODE.NONE
         this.projMode = PROJ.ORTHO
+        this.objects = []
+
         this.initCamConfig()
         this.initProjection()
-        this.initObjects()
         this.initInputs()
         this.initButtons()
         this.initTransforms()
-
+        this.initUploader()
+    
         this.main = new MainView(this)
         this.applyProjection()
     }
@@ -50,26 +52,14 @@ class Observer {
         }
     }
 
-    initButtons() {
-        for (let i = 0; i < this.objects.length; i++) {
-            var button = document.createElement("button")
-            button.textContent = "Object "+i
-            document.getElementById('btn-container').appendChild(button)
-            button.onclick = () => {
-                if (this.selected !== null) {
-                    document.getElementById('btn-container')
-                        .children[this.selected]
-                        .classList.toggle("selected", false)
-                }
-                this.pointToObject(i)
-                document.getElementById('btn-container').children[i].classList.toggle("selected")
-
-                modes.forEach((k) => {
-                    document.getElementById(k+'-btn').hidden = false
-                })
-            }
+    initUploader() {
+        var fileUploader = document.getElementById('file-uploader')
+        fileUploader.onchange = (e) => {
+          this.__loadFromFile(e.target.files[0])
         }
+    }
 
+    initButtons() {
         modes.forEach((k) => {
             document.getElementById(k+"-btn").hidden = true
             document.getElementById(k+"-btn").onclick = () => {
@@ -243,15 +233,25 @@ class Observer {
                 document.getElementById(m+'-sec').hidden = true
                 t = ["fovy", "aspect", "near", "far"]
             } else {
+                document.getElementById(m+'-sec').childNodes.forEach((child) => {
+                    child.hidden = false
+                })
                 document.getElementById(m+'-btn').classList.toggle("selected")
                 t = ["left", "right", "top", "bottom", "near", "far"]
             }
             t.forEach((e) => {
-                document.getElementById(m+'-'+e).value = this.projection[e]
+                let val
+                if (["xz", "yz"].includes(e)) {
+                    val = this.projection[e+"-deg"]
+                } else {
+                    val = this.projection[e]
+                }
+                document.getElementById(m+'-'+e).value = val
             })
         })
 
         document.getElementById("scale").value = 0
+
     }
 
     resetCam() {
@@ -351,25 +351,73 @@ class Observer {
         }
     }
 
-    initObjects() {
-        this.objects = [new HollowPyramid(), new HollowPyramid(), new HollowHexagonPrism()]
-        this.objects[0].addViewMatrix(getSMat([3, 3, 3]))
-        this.objects[0].addViewMatrix(getTMat([0, 0.1, 0]))
-        this.objects[0].addViewMatrix(getTMat([0, 0.1, 0]))
-        this.objects[0].addScaling(0.5)
-        this.objects[0].applyTransformation()
+    __loadFromFile(file) {
+        try {
+          const reader = new FileReader(file)
+          reader.addEventListener('load', (e) => {
+            this.initObjects(JSON.parse(e.target.result))
+          })
+          reader.readAsText(file)
+        } catch {
+          console.log('Please use valid model file.')
+        }
+    }
 
-        this.objects[1].addViewMatrix(getSMat([3, 3, 3]))
-        this.objects[1].addViewMatrix(getTMat([0, 0.1, 0]))
-        this.objects[1].applyTransformation()
-        this.objects[1] = new HollowPyramid(JSON.parse(JSON.stringify(this.objects[1].parse())))
-        this.objects[1].addViewMatrix(getTMat([0, 1, 0]))
-        this.objects[1].addRotateX(30)
-        this.objects[1].addRotateY(30)
-        this.objects[1].addScaling(0.5)
-        this.objects[1].applyTransformation()
+    _resetTransform() {
+        this.initTransforms()
+        this.resetTrf()
+        if (this.mode)
+            document.getElementById(this.mode+'-btn').classList.toggle("selected", false)
 
-        this.objects[2].applyTransformation()
+        this.mode = MODE.NONE
+        this.selected = null
+        modes.forEach((k) => {
+            document.getElementById(k+'-btn').hidden = true
+        })
+        modes.forEach((k) => {
+            document.getElementById(k+'-sec').hidden = true
+        })
+        confirmations.forEach((k) => {
+            document.getElementById(k+'-btn').hidden = true
+        })
+    }
+
+    _initObjectButtons() {
+        document.getElementById('btn-container').innerHTML = ""
+        for (let i = 0; i < this.objects.length; i++) {
+            var button = document.createElement("button")
+            button.textContent = "Object "+i
+            document.getElementById('btn-container').appendChild(button)
+            button.onclick = () => {
+                if (this.selected !== null) {
+                    document.getElementById('btn-container')
+                        .children[this.selected]
+                        .classList.toggle("selected", false)
+                }
+                this.pointToObject(i)
+                document.getElementById('btn-container').children[i].classList.toggle("selected")
+
+                modes.forEach((k) => {
+                    document.getElementById(k+'-btn').hidden = false
+                })
+            }
+        }
+    }
+
+    initObjects(data) {
+        this.objects = []
+        data.forEach((obj) => {
+            if (obj["type"] == "triangular_pyramid") {
+                this.objects.push(new HollowPyramid(obj))
+            } else if (obj["type"] == "hexagonal_prism") {
+                this.objects.push(new HollowHexagonPrism(obj))
+            } else  {
+                // Fill here
+            }
+        })
+        this._resetTransform()
+        this._initObjectButtons()
+        this.drawObjects(this.main.gl, this.main.shaderProgram)
     }
 
     drawObjects(gl, shaderProgram) {
