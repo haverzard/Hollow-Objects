@@ -181,7 +181,7 @@ class HollowHexagonPrism extends HollowObject {
      */
     generate_color() {
         var face_colors = [
-            [1.0,  1.0,  1.0],    // Front face: white
+            [0.0,  0.0,  0.0],    // Front face: black
             [1.0,  0.0,  0.0],    // Back face: red
             [0.0,  1.0,  0.0],    // Top face: green
             [0.0,  0.0,  1.0],    // Bottom face: blue
@@ -231,9 +231,10 @@ class HollowHexagonPrism extends HollowObject {
 
         // draw every single face with corresponding normals and shininess
         var idx = 0;
+        var colIdx = 0
         for (var i = 0; i < 24 * 18; i += 4) {
             // set normal and shininess for every shape
-            setVector3D(gl, shaderProgram, "u_color", new Float32Array(this.temp_color.slice(idx*3, idx*3+3)))
+            setVector3D(gl, shaderProgram, "u_color", new Float32Array(this.temp_color.slice(idx * 3, idx * 3 + 3)))
             setVector3D(gl, shaderProgram, "u_normal", new Float32Array(this.temp_normal[idx]))
             gl.uniform1f(gl.getUniformLocation(shaderProgram, "u_shininess"), this.temp_shininess[idx])
 
