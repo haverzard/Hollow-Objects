@@ -422,8 +422,8 @@ class Observer {
                 this.objects.push(new HollowPyramid(obj))
             } else if (obj["type"] == "hexagonal_prism") {
                 this.objects.push(new HollowHexagonPrism(obj))
-            } else  {
-                // Fill here
+            } else if (obj["type"] == "cube")  {
+                this.objects.push(new HollowCube(obj))
             }
             this.shading.push(true)
         })
