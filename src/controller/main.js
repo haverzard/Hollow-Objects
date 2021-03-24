@@ -142,10 +142,12 @@ class Observer {
     }
 
     applyTransformation(perm=false) {
+        // translate to origin
         this.objects[this.selected]
             .resetViewMatrix()
             .addTranslation(neg(this.objects[this.selected].mid))
 
+        // apply transformation
         if (this.mode == MODE.ROTATE) {
             this.objects[this.selected]
                 .addRotateX(this.transform["rotate"][0])
@@ -157,8 +159,10 @@ class Observer {
             this.objects[this.selected].addScaling(this.transform["scale"])
         }
 
+        // translate back
         this.objects[this.selected].addTranslation(this.objects[this.selected].mid)
 
+        // apply it to the object so it's permanent
         if (perm) {
             this.objects[this.selected].applyTransformation()
             this.resetTrf()
@@ -170,10 +174,12 @@ class Observer {
             })
         }
 
+        // draw changes
         this.drawObjects(this.main.gl, this.main.shaderProgram)
     }
 
     applyProjection() {
+        // get projection matrix
         let projectionMatrix
         if (this.projMode === PROJ.ORTHO) { 
             projectionMatrix = getOrthoMat(
@@ -203,18 +209,23 @@ class Observer {
                 this.projection["yz-deg"]
             )
         }
+        // send projection matrix to gpu
         setMatTransform(this.main.gl, this.main.shaderProgram, "u_Projection", projectionMatrix)
+        // draw changes
         this.drawObjects(this.main.gl, this.main.shaderProgram)
     }
 
     applyCamConfig() {
+        // get camera model matrix
         let matCam = getIdentityMat()
         matCam = matMult(getTMat([0, 0, -this.camConfig["radius"]]), matCam)
         matCam = matMult(matCam, getRxMat(this.camConfig["xRot"]))
         matCam = matMult(matCam, getRyMat(this.camConfig["yRot"]))
         matCam = matMult(matCam, getRzMat(this.camConfig["zRot"]))
+        // send model matrix to gpu
         setMatTransform(this.main.gl, this.main.shaderProgram, "u_Model", matCam)
         this.main.ModelMatrix = matCam
+        // draw changes
         this.drawObjects(this.main.gl, this.main.shaderProgram)
     }
 

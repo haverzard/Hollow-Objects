@@ -172,10 +172,45 @@
         </section>
         <section id="help" class="hide-menu">
           <div class="help-container">
-            <h1>Test</h1>
-            <p>
-              Test
-            </p>
+            <h1>User Manual</h1>
+            <h3>Load objek</h3>
+            <ol>
+              <li>Pada ujung kiri atas, kliklah tombol load;</li>
+              <li>Pilihlah berkas JSON model yang bersesuaian, lalu klik load;</li>
+              <li>Model objek akan muncul di kanvas.</li>
+            </ol>
+            <h3>Manipulasi objek</h3>
+            <ol>
+              <li>Setiap Anda meload objek, akan muncul tombol di sebelah kanan kanvas untuk setiap objek ke-i;</li>
+              <li>Untuk memilih objek ke-i, cukup tekan tombol objek ke-i dan akan muncul tombol baru berupa mode manipulasi yang Anda inginkan (translasi, rotasi, scaling);</li>
+              <li>Untuk setiap mode, akan disediakan parameter-parameter tersendiri untuk mengatur manipulasi yang Anda inginkan;</li>
+              <li>Jika Anda sudah puas dengan manipulasinya, tekan tombol apply untuk membuat manipulasi Anda permanen. Apabila Anda tidak jadi memanipulasi objek, Anda dapat menekan tombol cancel.</li>
+            </ol>
+            <h3>Rotate viewer camera</h3>
+            <ol>
+              <li>Anda dapat “menggerakkan kepala” Anda sebagai viewer dengan menggerakkan mouse Anda di kanvas sambil menekan mouse Anda untuk melihat sekeliling Anda di posisi Anda sekarang.</li>
+              <li>Anda juga dapat melakukan rotasi dengan mengubah parameter rotate pada camera config.</li>
+            </ol>
+            <h3>Pengubahan jenis proyeksi</h3>
+            <ol>
+              <li>Di bawah opsi manipulasi objek, terdapat opsi untuk mengubah jenis proyeksi: orthogonal, perspektif, atau oblique;</li>
+              <li>Klik jenis proyeksi yang Anda inginkan;</li>
+              <li>Setiap jenis proyeksi memiliki parameter yang bisa Anda atur sesuai keinginan. Proyeksi akan otomatis berubah sesuai dengan parameter yang Anda atur;</li>
+              <li>Untuk mengembalikan proyeksi ke view semula, yaitu orthogonal dengan posisi di origin menghadap ke sumbu-z negatif,  klik tombol reset.</li>
+            </ol>
+            <h3>Pengubahan radius kamera dan rotasi kamera</h3>
+            <ol>
+              <li>Di bawah opsi manipulasi objek (dan di samping opsi pengubahan proyeksi), terdapat opsi untuk mengubah radius dan rotasi posisi;</li>
+              <li>Terdapat 4 parameter: radius kamera terhadap titik origin, dan rotasi posisi kamera di tiga sumbu x, y, dan z terhadap titik origin. Aturlah parameter ini sesuai dengan keinginan Anda;</li>
+              <li>Untuk mengembalikan keadaan kamera ke kondisi awal, yaitu radius nol (posisi di origin) menghadap ke sumbu-z negatif,  klik tombol reset di bagian proyeksi.</li>
+            </ol>
+            <h3>Turn on/off shader</h3>
+            <ol>
+              <li>Setiap Anda meload objek, akan muncul tombol di sebelah kanan kanvas untuk setiap objek ke-i;</li>
+              <li>Untuk memilih objek ke-i, cukup tekan tombol objek ke-i dan akan muncul tombol baru berupa “shading” yang berwarna hijau;</li>
+              <li>Tekan tombol ini untuk mengubah shading menjadi on/off;</li>
+              <li>Warna hijau menandakan bahwa shading on dan warna putih menandakan bahwa shading off.</li>
+            </ol>
           </div>
         </section>
       </div>
